@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisi Interattiva: NVIDIA - Il Motore dell'IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals & Subtle Green -->
+    <!-- Application Structure Plan: La struttura è tematica e narrativa, progettata per guidare l'utente dalla visione generale della "Rivoluzione AI" di NVIDIA ai dettagli specifici. Inizia con il "perché" (la rivoluzione AI), passa al "come" (il vantaggio competitivo e la leadership), mostra le "prove" (l'analisi finanziaria e competitiva), valuta il "futuro" (SWOT e rischi) e si conclude con la sintesi (tesi finale). Questa struttura non lineare è più coinvolgente di un semplice report, permettendo agli utenti di cogliere prima il quadro generale e poi approfondire le aree di interesse. Le interazioni (grafici, selettori, card) sono pensate per semplificare dati complessi e rendere l'esplorazione intuitiva. -->
+    <!-- Visualization & Content Choices: 1. Crescita Finanziaria -> Goal: Mostrare correlazioni tra crescita (Ricavi), profitto (Utile Netto), redditività (ROE), valutazione (P/E, P/B) e rischio (D/E). -> Viz: Grafico a linee interattivo con doppio asse Y (Chart.js/Canvas). Interazione: Pulsanti multi-selezione. Giustificazione: Il doppio asse è essenziale per confrontare metriche con scale diverse (miliardi vs rapporti/percentuali), fornendo un'analisi più ricca. 2. Vantaggio Competitivo -> Goal: Organizzare -> Viz: Layout a tre colonne (HTML/Tailwind). 3. Confronto Competitivo -> Goal: Confrontare -> Viz: Tabella HTML. 4. Analisi SWOT -> Goal: Organizzare -> Viz: Griglia 2x2 (HTML/Tailwind). -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f5f4; /* stone-100 */
+            color: #1c1917; /* stone-900 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 50vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 450px;
+            }
+        }
+        .nav-link {
+            position: relative;
+            transition: color 0.3s;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4ade80; /* green-400 */
+            transition: width 0.3s;
+        }
+        .nav-link:hover::after,
+        .nav-link.active-nav::after {
+            width: 100%;
+        }
+        .active-nav {
+            color: #22c55e; /* green-500 */
+            font-weight: 600;
+        }
+        .metric-button {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .metric-button.active {
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px 0 rgba(34, 197, 94, 0.39);
+        }
+        .metric-button.active[data-metric="revenue"] { background-color: #22c55e; }
+        .metric-button.active[data-metric="net_income"] { background-color: #8b5cf6; }
+        .metric-button.active[data-metric="roe"] { background-color: #3b82f6; }
+        .metric-button.active[data-metric="pe_ratio"] { background-color: #ef4444; }
+        .metric-button.active[data-metric="pb_ratio"] { background-color: #f97316; }
+        .metric-button.active[data-metric="de_ratio"] { background-color: #14b8a6; }
+
+        .content-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .content-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Navigation -->
+    <header id="main-header" class="bg-stone-100/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <span class="text-2xl font-bold text-stone-800">NVIDIA</span>
+                        <span class="text-2xl font-bold text-green-500">.</span>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <nav id="main-nav" class="ml-10 flex items-baseline space-x-4">
+                        <a href="#rivoluzione-ai" class="nav-link text-stone-600 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium">La Rivoluzione AI</a>
+                        <a href="#analisi-finanziaria" class="nav-link text-stone-600 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium">Finanza</a>
+                        <a href="#vantaggio-competitivo" class="nav-link text-stone-600 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium">Vantaggio</a>
+                        <a href="#leadership" class="nav-link text-stone-600 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium">Leadership</a>
+                        <a href="#analisi-competitiva" class="nav-link text-stone-600 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium">Concorrenza</a>
+                        <a href="#swot-rischi" class="nav-link text-stone-600 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium">SWOT & Rischi</a>
+                        <a href="#tesi-finale" class="nav-link text-stone-600 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium">Tesi Finale</a>
+                    </nav>
+                </div>
+                <div class="-mr-2 flex md:hidden">
+                    <button id="mobile-menu-button" type="button" class="bg-stone-200 inline-flex items-center justify-center p-2 rounded-md text-stone-600 hover:text-stone-800 hover:bg-stone-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-stone-200 focus:ring-green-500" aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Apri menu principale</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="md:hidden" id="mobile-menu" style="display: none;">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#rivoluzione-ai" class="nav-link text-stone-600 hover:text-green-500 block px-3 py-2 rounded-md text-base font-medium">La Rivoluzione AI</a>
+                <a href="#analisi-finanziaria" class="nav-link text-stone-600 hover:text-green-500 block px-3 py-2 rounded-md text-base font-medium">Finanza</a>
+                <a href="#vantaggio-competitivo" class="nav-link text-stone-600 hover:text-green-500 block px-3 py-2 rounded-md text-base font-medium">Vantaggio</a>
+                <a href="#leadership" class="nav-link text-stone-600 hover:text-green-500 block px-3 py-2 rounded-md text-base font-medium">Leadership</a>
+                <a href="#analisi-competitiva" class="nav-link text-stone-600 hover:text-green-500 block px-3 py-2 rounded-md text-base font-medium">Concorrenza</a>
+                <a href="#swot-rischi" class="nav-link text-stone-600 hover:text-green-500 block px-3 py-2 rounded-md text-base font-medium">SWOT & Rischi</a>
+                <a href="#tesi-finale" class="nav-link text-stone-600 hover:text-green-500 block px-3 py-2 rounded-md text-base font-medium">Tesi Finale</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="py-20 md:py-32 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-stone-800 leading-tight">
+                    NVIDIA: L'Architetto della 
+                    <span class="text-green-500">Rivoluzione Industriale dell'IA</span>
+                </h1>
+                <p class="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-stone-600">
+                    Un'analisi interattiva della trasformazione di NVIDIA da leader del gaming a pilastro indispensabile dell'intelligenza artificiale globale, esplorando la sua crescita esplosiva, il suo vantaggio competitivo e le prospettive future.
+                </p>
+                <div class="mt-10">
+                    <a href="#analisi-finanziaria" class="inline-block bg-green-500 text-white font-bold rounded-full py-3 px-8 text-lg hover:bg-green-600 transition duration-300 transform hover:scale-105">
+                        Inizia l'Analisi Finanziaria
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <div id="main-content" class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 space-y-24">
+
+            <!-- La Rivoluzione AI -->
+            <section id="rivoluzione-ai" class="content-section">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-stone-800">Da Pioniere della Grafica a Motore dell'IA</h2>
+                    <p class="mt-4 max-w-3xl mx-auto text-lg text-stone-600">
+                        Questa sezione esplora la visione strategica che ha trasformato NVIDIA. Non si tratta di una semplice evoluzione, ma di una serie di scommesse audaci che hanno anticipato e creato il mercato del calcolo accelerato, posizionando l'azienda al centro della più grande transizione tecnologica della nostra era.
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8 text-center">
+                    <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300">
+                        <div class="text-4xl text-green-500 mb-4">❶</div>
+                        <h3 class="text-xl font-semibold mb-2 text-stone-800">La Nascita del GPU (1999)</h3>
+                        <p class="text-stone-600">Con la GeForce 256, NVIDIA non migliora semplicemente la grafica, ma inventa una nuova categoria di processori. La sua architettura massicciamente parallela, nata per i videogiochi, si rivelerà la chiave per il futuro del supercalcolo.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300">
+                        <div class="text-4xl text-green-500 mb-4">❷</div>
+                        <h3 class="text-xl font-semibold mb-2 text-stone-800">L'Intuizione di CUDA (2006)</h3>
+                        <p class="text-stone-600">Una mossa visionaria: aprire i GPU al calcolo generico. CUDA trasforma un processore grafico in un supercomputer accessibile, gettando le fondamenta software per la rivoluzione dell'IA, anni prima della sua esplosione.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300">
+                        <div class="text-4xl text-green-500 mb-4">❸</div>
+                        <h3 class="text-xl font-semibold mb-2 text-stone-800">Il "Big Bang" dell'IA (2012-Oggi)</h3>
+                        <p class="text-stone-600">La vittoria di AlexNet su GPU NVIDIA dimostra al mondo la superiorità del calcolo accelerato per il deep learning. Da quel momento, NVIDIA diventa l'infrastruttura indispensabile su cui si costruisce l'economia globale dell'IA.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Analisi Finanziaria -->
+            <section id="analisi-finanziaria" class="content-section">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-stone-800">Analisi Finanziaria Interattiva</h2>
+                     <p class="mt-4 max-w-3xl mx-auto text-lg text-stone-600">
+                        Questa sezione permette di esplorare e confrontare interattivamente i parametri finanziari chiave di NVIDIA negli ultimi 20 anni. Analizza le correlazioni tra crescita (Ricavi), profitto (Utile Netto), redditività per gli azionisti (ROE), valutazione di mercato (P/E, P/B) e solidità finanziaria (D/E).
+                    </p>
+                </div>
+                <div class="bg-white p-4 sm:p-6 md:p-8 rounded-2xl shadow-lg">
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6 max-w-3xl mx-auto">
+                        <button class="metric-button bg-stone-200 text-stone-700 font-semibold py-2 px-4 rounded-full" data-metric="revenue">Ricavi</button>
+                        <button class="metric-button bg-stone-200 text-stone-700 font-semibold py-2 px-4 rounded-full" data-metric="net_income">Utile Netto</button>
+                        <button class="metric-button bg-stone-200 text-stone-700 font-semibold py-2 px-4 rounded-full" data-metric="roe">ROE</button>
+                        <button class="metric-button bg-stone-200 text-stone-700 font-semibold py-2 px-4 rounded-full" data-metric="pe_ratio">P/E Ratio</button>
+                        <button class="metric-button bg-stone-200 text-stone-700 font-semibold py-2 px-4 rounded-full" data-metric="pb_ratio">P/B Ratio</button>
+                        <button class="metric-button bg-stone-200 text-stone-700 font-semibold py-2 px-4 rounded-full" data-metric="de_ratio">D/E Ratio</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="financialChart"></canvas>
+                    </div>
+                </div>
+                <div id="legend-container" class="mt-8 max-w-4xl mx-auto bg-stone-50 p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-bold text-stone-800 mb-4 text-center">Legenda Indicatori</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                        <div><strong class="text-green-600">Ricavi:</strong> L'incasso totale dalle vendite di prodotti e servizi. Misura la crescita del business.</div>
+                        <div><strong class="text-purple-600">Utile Netto:</strong> Il profitto finale dopo aver sottratto tutti i costi, le tasse e gli interessi. Misura la redditività assoluta.</div>
+                        <div><strong class="text-blue-600">ROE (Return on Equity):</strong> La capacità di generare profitti dal capitale degli azionisti. Un ROE alto indica un'azienda di qualità.</div>
+                        <div><strong class="text-red-600">P/E (Price-to-Earnings):</strong> Quante volte il mercato paga gli utili dell'azienda. Misura se il prezzo è "caro" o "economico".</div>
+                        <div><strong class="text-orange-600">P/B (Price-to-Book):</strong> Confronta il prezzo di mercato con il valore contabile dell'azienda. Misura il valore "tangibile".</div>
+                        <div><strong class="text-teal-600">D/E (Debt-to-Equity):</strong> Il rapporto tra debiti e capitale proprio. Misura il rischio finanziario e la solidità.</div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Vantaggio Competitivo -->
+            <section id="vantaggio-competitivo" class="content-section">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-stone-800">Il "Moat": Un Vantaggio Invalicabile</h2>
+                    <p class="mt-4 max-w-3xl mx-auto text-lg text-stone-600">
+                        Il dominio di NVIDIA non si basa solo su chip più veloci. Si fonda su un "fossato" competitivo profondo costruito in decenni. Questa sezione scompone i tre pilastri che rendono la sua posizione di mercato così difficile da attaccare, offrendo una visione chiara delle sue difese strategiche.
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-xl shadow-lg border-t-4 border-green-400">
+                        <h3 class="text-2xl font-bold text-stone-800 mb-4">
+                            <span class="text-green-500 mr-2">#</span>Ecosistema CUDA
+                        </h3>
+                        <p class="text-stone-600">Il vero fossato non è il silicio, ma il software. CUDA è la piattaforma che lega milioni di sviluppatori e migliaia di applicazioni a NVIDIA. I costi di migrazione per i clienti sono proibitivi, creando un potente effetto di rete e una barriera competitiva quasi insormontabile.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-lg border-t-4 border-green-400">
+                         <h3 class="text-2xl font-bold text-stone-800 mb-4">
+                            <span class="text-green-500 mr-2">⚡</span>Innovazione Incessante
+                        </h3>
+                        <p class="text-stone-600">Con una cadenza di nuove architetture che i rivali faticano a eguagliare (da Hopper a Blackwell a Rubin), NVIDIA non vende solo chip, ma piattaforme "full-stack" ottimizzate (hardware, software, networking) che definiscono costantemente lo stato dell'arte e alzano l'asticella della performance.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-lg border-t-4 border-green-400">
+                         <h3 class="text-2xl font-bold text-stone-800 mb-4">
+                           <span class="text-green-500 mr-2">🤝</span>Alleanze Strategiche
+                        </h3>
+                        <p class="text-stone-600">Dall'acquisizione trasformativa di Mellanox (networking) a partnership profonde con tutti i principali cloud provider e OEM, NVIDIA ha tessuto una rete di alleanze che integra le sue tecnologie in ogni angolo dell'ecosistema tech, amplificando la sua portata e rafforzando il suo standard.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Leadership -->
+            <section id="leadership" class="content-section">
+                 <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-stone-800">La Visione di Jensen Huang</h2>
+                    <p class="mt-4 max-w-3xl mx-auto text-lg text-stone-600">
+                        Un'azienda è spesso il riflesso del suo leader. Nel caso di NVIDIA, la leadership di Jensen Huang è un asset strategico intangibile. Questa sezione analizza come il suo stile non convenzionale, la sua visione a lungo termine e la sua cultura aziendale siano diventati un "fossato organizzativo" tanto importante quanto quello tecnologico.
+                    </p>
+                </div>
+                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="p-8">
+                        <div class="grid md:grid-cols-2 gap-8 items-center">
+                            <div>
+                                <h3 class="text-3xl font-bold text-stone-800">Jensen Huang</h3>
+                                <p class="text-xl font-medium text-green-600 mt-1">Co-fondatore & CEO</p>
+                                <p class="mt-4 text-stone-600">
+                                    Lo stile di leadership di Huang è un pilastro del successo di NVIDIA. Rifiutando le gerarchie tradizionali a favore della trasparenza radicale e dell'agilità decisionale, ha forgiato una cultura di innovazione resiliente e veloce, in grado di navigare e definire un settore in continua evoluzione.
+                                </p>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="bg-stone-100 p-4 rounded-lg">
+                                    <h4 class="font-bold text-stone-700">Visione a Lungo Termine</h4>
+                                    <p class="text-sm text-stone-600">Scommesse strategiche come CUDA dimostrano la sua capacità di creare mercati futuri, non solo di servirli.</p>
+                                </div>
+                                 <div class="bg-stone-100 p-4 rounded-lg">
+                                    <h4 class="font-bold text-stone-700">Agilità Organizzativa</h4>
+                                    <p class="text-sm text-stone-600">Una struttura piatta con decine di riporti diretti accelera il flusso di informazioni e le decisioni.</p>
+                                </div>
+                                 <div class="bg-stone-100 p-4 rounded-lg">
+                                    <h4 class="font-bold text-stone-700">Cultura della Trasparenza</h4>
+                                    <p class="text-sm text-stone-600">Promuove l'onestà intellettuale e la condivisione degli errori come opportunità di apprendimento.</p>
+                                </div>
+                                <div class="bg-stone-100 p-4 rounded-lg">
+                                    <h4 class="font-bold text-stone-700">Competenza Tecnica</h4>
+                                    <p class="text-sm text-stone-600">Una profonda comprensione tecnica gli permette di guidare l'innovazione dal fronte.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+            </section>
+            
+            <!-- Analisi Competitiva -->
+            <section id="analisi-competitiva" class="content-section">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-stone-800">Panorama Competitivo</h2>
+                     <p class="mt-4 max-w-3xl mx-auto text-lg text-stone-600">
+                        Nessun leader è senza sfidanti. In questa sezione, analizziamo la posizione di NVIDIA rispetto ai suoi principali concorrenti. La tabella comparativa offre un rapido confronto quantitativo, mentre l'analisi testuale esplora la minaccia strategica più complessa: la corsa dei suoi stessi clienti a sviluppare chip personalizzati.
+                    </p>
+                </div>
+                <div class="overflow-x-auto bg-white rounded-xl shadow-lg">
+                    <table id="competition-table" class="w-full text-left">
+                        <thead class="bg-stone-50 border-b border-stone-200">
+                            <tr>
+                                <th class="p-4 font-semibold text-stone-600">Metrica di Valutazione</th>
+                                <th class="p-4 font-semibold text-green-600 text-center">NVIDIA (NVDA)</th>
+                                <th class="p-4 font-semibold text-stone-600 text-center">AMD (AMD)</th>
+                                <th class="p-4 font-semibold text-stone-600 text-center">Intel (INTC)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                 <div class="mt-8 bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-semibold text-stone-800">La Minaccia degli "Hyperscaler"</h3>
+                    <p class="mt-2 text-stone-600">Forse il rischio più grande a lungo termine non viene dai rivali tradizionali, ma dai clienti più importanti di NVIDIA. Giganti come Google, Amazon e Microsoft stanno investendo miliardi per creare i propri chip AI (TPU, Trainium, Maia). Il loro obiettivo è duplice: ridurre la dipendenza da NVIDIA e ottimizzare l'hardware per i propri carichi di lavoro specifici. Sebbene questo validi l'importanza del mercato, esercita una pressione a lungo termine sui margini e sulla quota di mercato di NVIDIA nel segmento cloud di fascia altissima.</p>
+                </div>
+            </section>
+
+            <!-- Analisi SWOT & Rischi -->
+            <section id="swot-rischi" class="content-section">
+                 <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-stone-800">SWOT & Rischi Chiave</h2>
+                     <p class="mt-4 max-w-3xl mx-auto text-lg text-stone-600">
+                        Un'analisi completa richiede una visione equilibrata. La griglia SWOT riassume i punti di forza, le debolezze, le opportunità e le minacce che definiscono la posizione strategica di NVIDIA. Subito dopo, evidenziamo i rischi più concreti che un investitore deve considerare, dalla valutazione elevata alle complesse dinamiche geopolitiche.
+                    </p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Strengths -->
+                    <div class="bg-green-50 p-6 rounded-xl border-l-4 border-green-500">
+                        <h3 class="text-xl font-bold text-green-800 mb-3">Punti di Forza (Strengths)</h3>
+                        <ul class="list-disc list-inside space-y-2 text-green-900">
+                            <li>Dominio quasi monopolistico del mercato AI (>80%)</li>
+                            <li>Invalicabile "moat" software con l'ecosistema CUDA</li>
+                            <li>Leadership tecnologica e ritmo di innovazione</li>
+                            <li>Performance finanziaria e redditività eccezionali</li>
+                        </ul>
+                    </div>
+                    <!-- Weaknesses -->
+                    <div class="bg-yellow-50 p-6 rounded-xl border-l-4 border-yellow-500">
+                        <h3 class="text-xl font-bold text-yellow-800 mb-3">Punti di Debolezza (Weaknesses)</h3>
+                        <ul class="list-disc list-inside space-y-2 text-yellow-900">
+                            <li>Forte dipendenza da un singolo fornitore (TSMC)</li>
+                            <li>Concentrazione dei ricavi sul segmento Data Center</li>
+                            <li>Prezzi dei prodotti molto elevati</li>
+                        </ul>
+                    </div>
+                    <!-- Opportunities -->
+                    <div class="bg-blue-50 p-6 rounded-xl border-l-4 border-blue-500">
+                        <h3 class="text-xl font-bold text-blue-800 mb-3">Opportunità (Opportunities)</h3>
+                        <ul class="list-disc list-inside space-y-2 text-blue-900">
+                            <li>Espansione del mercato dall'addestramento all'inferenza</li>
+                            <li>Monetizzazione dello stack software (ricavi ricorrenti)</li>
+                            <li>Mercati emergenti: Automotive, Edge AI, Robotica</li>
+                            <li>Adozione dell'IA nelle imprese ancora in fase iniziale</li>
+                        </ul>
+                    </div>
+                    <!-- Threats -->
+                    <div class="bg-red-50 p-6 rounded-xl border-l-4 border-red-500">
+                        <h3 class="text-xl font-bold text-red-800 mb-3">Minacce (Threats)</h3>
+                        <ul class="list-disc list-inside space-y-2 text-red-900">
+                            <li>Concorrenza di AMD e sviluppo di chip "in-house" dai clienti</li>
+                            <li>Rischi geopolitici (restrizioni commerciali, Taiwan)</li>
+                            <li>Valutazione di mercato che sconta una crescita perfetta</li>
+                            <li>Potenziali indagini antitrust e normative</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Tesi Finale -->
+            <section id="tesi-finale" class="content-section">
+                <div class="bg-white rounded-2xl shadow-lg p-8 md:p-12">
+                    <div class="text-center">
+                        <h2 class="text-3xl md:text-4xl font-bold text-stone-800">Tesi Finale dell'Investimento</h2>
+                    </div>
+                    <div class="mt-8 text-lg text-stone-700 space-y-4 max-w-4xl mx-auto">
+                        <p>NVIDIA ha trasceso il suo ruolo di produttore di hardware per diventare l'architetto e il fornitore di infrastrutture indispensabile per l'era dell'intelligenza artificiale. La valutazione attuale, sebbene elevata, riflette il suo ruolo quasi monopolistico in un mercato secolare in crescita esponenziale, la sua eccezionale redditività e un vantaggio competitivo profondo radicato nell'ecosistema software CUDA.</p>
+                        <p class="font-semibold text-stone-800">Un investimento in NVIDIA oggi è una scommessa diretta sulla continuazione e l'accelerazione della rivoluzione dell'IA e sulla sua capacità di mantenere la leadership tecnologica.</p>
+                        <p>I rischi sono significativi e legati a una valutazione che non lascia margine d'errore e a complesse dinamiche geopolitiche. Tuttavia, per un investitore con un orizzonte a lungo termine e un'adeguata tolleranza al rischio, NVIDIA rappresenta un'esposizione unica e potenzialmente irripetibile al più importante megatrend tecnologico di questa generazione.</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="bg-stone-800 text-stone-300">
+        <div class="container mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2025 Analisi Interattiva NVIDIA. Creato a scopo informativo.</p>
+            <p class="text-sm text-stone-400 mt-2">Dati finanziari basati su documenti pubblici (SEC filings). I multipli di valutazione sono stime e possono variare.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const financialData = {
+                labels: ['2005', '2007', '2010', '2013', '2015', '2018', '2020', '2022', '2023', '2024', '2025'],
+                datasets: {
+                    revenue: {
+                        label: 'Ricavi (Mld $)',
+                        data: [2.01, 3.07, 3.33, 4.28, 4.68, 9.71, 10.92, 26.91, 26.97, 60.92, 130.50],
+                        borderColor: '#22c55e',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        hidden: false,
+                        yAxisID: 'yDollars'
+                    },
+                    net_income: {
+                        label: 'Utile Netto (Mld $)',
+                        data: [0.10, 0.45, -0.07, 0.56, 0.63, 3.05, 2.80, 9.75, 4.37, 29.76, 72.88],
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        hidden: true,
+                        yAxisID: 'yDollars'
+                    },
+                    roe: {
+                        label: 'ROE (%)',
+                        data: [8.5, 22.4, -2.5, 11.7, 14.3, 40.8, 22.9, 36.6, 19.8, 69.2, 117.3],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        hidden: false,
+                        yAxisID: 'yRatios'
+                    },
+                    pe_ratio: {
+                        label: 'P/E Ratio',
+                        data: [25.1, 30.2, null, 18.3, 24.1, 45.5, 52.3, 70.1, 113.2, 60.5, 48.7],
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        hidden: true,
+                        yAxisID: 'yRatios'
+                    },
+                    pb_ratio: {
+                        label: 'P/B Ratio',
+                        data: [4.1, 8.2, 4.3, 3.1, 4.5, 18.2, 12.1, 25.4, 20.3, 35.1, 45.3],
+                        borderColor: '#f97316',
+                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                        hidden: true,
+                        yAxisID: 'yRatios'
+                    },
+                    de_ratio: {
+                        label: 'D/E Ratio',
+                        data: [0.00, 0.33, 0.00, 0.33, 0.31, 0.50, 0.16, 0.66, 0.50, 0.53, 0.11],
+                        borderColor: '#14b8a6',
+                        backgroundColor: 'rgba(20, 184, 166, 0.1)',
+                        hidden: true,
+                        yAxisID: 'yRatios'
+                    }
+                }
+            };
+
+            const competitionData = [
+                { metric: 'Capitalizzazione (approx.)', nvidia: '~ $3.8 T', amd: '~ $232 B', intel: '~ $98 B' },
+                { metric: 'P/E Ratio (Trailing)', nvidia: '~ 49x', amd: '~ 104x', intel: 'N/A' },
+                { metric: 'P/S Ratio (Trailing)', nvidia: '~ 25x', amd: '~ 8.4x', intel: '~ 1.6x' },
+                { metric: 'EV/EBITDA (Trailing)', nvidia: '~ 42x', amd: '~ 39x', intel: '~ 35x' }
+            ];
+
+            let financialChart;
+
+            function initializeChart() {
+                const ctx = document.getElementById('financialChart').getContext('2d');
+                const chartDatasets = Object.values(financialData.datasets).map(ds => ({
+                    ...ds,
+                    type: 'line'
+                }));
+
+                financialChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: financialData.labels,
+                        datasets: chartDatasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        scales: {
+                            yDollars: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                grid: { color: '#e7e5e4' },
+                                ticks: { color: '#57534e' },
+                                title: {
+                                    display: true,
+                                    text: 'Miliardi di USD',
+                                    color: '#57534e'
+                                }
+                            },
+                            yRatios: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                grid: { drawOnChartArea: false },
+                                ticks: { color: '#57534e' },
+                                title: {
+                                    display: true,
+                                    text: 'Rapporti / %',
+                                    color: '#57534e'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#57534e',
+                                    usePointStyle: true,
+                                    boxWidth: 8,
+                                    padding: 20
+                                }
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                                backgroundColor: '#1c1917',
+                                titleColor: '#f5f5f4',
+                                bodyColor: '#f5f5f4',
+                                titleFont: { weight: 'bold' },
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) { label += ': '; }
+                                        if (context.parsed.y !== null) {
+                                            if (context.dataset.yAxisID === 'yDollars') {
+                                                label += context.parsed.y.toFixed(2) + ' Mld $';
+                                            } else if (label.includes('%')) {
+                                                 label += context.parsed.y.toFixed(1) + '%';
+                                            }
+                                            else {
+                                                label += context.parsed.y.toFixed(2) + 'x';
+                                            }
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        elements: {
+                            line: {
+                                tension: 0.3,
+                                fill: 'start'
+                            },
+                            point: {
+                                radius: 3,
+                                hoverRadius: 6
+                            }
+                        }
+                    }
+                });
+            }
+
+            function updateChart() {
+                const buttons = document.querySelectorAll('.metric-button');
+                buttons.forEach(button => {
+                    const metric = button.dataset.metric;
+                    const dataset = financialChart.data.datasets.find(d => d.label.toLowerCase().includes(metric.replace('_', ' ')));
+                    
+                    if (dataset) {
+                        dataset.hidden = !button.classList.contains('active');
+                    }
+                });
+                financialChart.update();
+            }
+
+            function setupMetricButtons() {
+                const buttons = document.querySelectorAll('.metric-button');
+                buttons.forEach(button => {
+                    const metric = button.dataset.metric;
+                    if (!financialData.datasets[metric].hidden) {
+                        button.classList.add('active');
+                    }
+                    
+                    button.addEventListener('click', (e) => {
+                        e.target.classList.toggle('active');
+                        updateChart();
+                    });
+                });
+            }
+
+            function populateCompetitionTable() {
+                const tableBody = document.querySelector('#competition-table tbody');
+                tableBody.innerHTML = '';
+                competitionData.forEach(row => {
+                    const rowEl = document.createElement('tr');
+                    rowEl.className = 'border-b border-stone-200 last:border-0 hover:bg-stone-50 transition-colors';
+                    rowEl.innerHTML = `
+                        <td class="p-4 text-stone-800 font-medium">${row.metric}</td>
+                        <td class="p-4 text-green-700 font-bold text-center">${row.nvidia}</td>
+                        <td class="p-4 text-stone-600 text-center">${row.amd}</td>
+                        <td class="p-4 text-stone-600 text-center">${row.intel}</td>
+                    `;
+                    tableBody.appendChild(rowEl);
+                });
+            }
+
+            function setupNavigation() {
+                const navLinks = document.querySelectorAll('.nav-link');
+                const mobileMenuButton = document.getElementById('mobile-menu-button');
+                const mobileMenu = document.getElementById('mobile-menu');
+
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        if (window.innerWidth < 768) {
+                           mobileMenu.style.display = 'none';
+                           mobileMenuButton.querySelector('svg.block').classList.remove('hidden');
+                           mobileMenuButton.querySelector('svg.hidden').classList.add('hidden');
+                        }
+                    });
+                });
+
+                mobileMenuButton.addEventListener('click', () => {
+                    const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+                    mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+                    mobileMenu.style.display = isExpanded ? 'none' : 'block';
+                    mobileMenuButton.querySelector('svg.block').classList.toggle('hidden');
+                    mobileMenuButton.querySelector('svg.hidden').classList.toggle('hidden');
+                });
+            }
+
+            function setupNavHighlight() {
+                const sections = document.querySelectorAll('#main-content > section');
+                const navLinks = document.querySelectorAll('#main-nav .nav-link, #mobile-menu .nav-link');
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            navLinks.forEach(link => {
+                                link.classList.remove('active-nav');
+                                if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                    link.classList.add('active-nav');
+                                }
+                            });
+                        }
+                    });
+                }, { rootMargin: "-40% 0% -60% 0%" });
+
+                sections.forEach(section => {
+                    observer.observe(section);
+                });
+            }
+            
+            function setupScrollAnimations() {
+                const sections = document.querySelectorAll('.content-section');
+                const observer = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                sections.forEach(section => {
+                    observer.observe(section);
+                });
+            }
+
+            initializeChart();
+            setupMetricButtons();
+            populateCompetitionTable();
+            setupNavigation();
+            setupNavHighlight();
+            setupScrollAnimations();
+        });
+    </script>
+</body>
+</html>
