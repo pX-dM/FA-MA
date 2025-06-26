@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisi Interattiva: Il Futuro di Intel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+            color: #1e293b; /* slate-800 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 60vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 500px;
+            }
+        }
+        .active-nav {
+            color: #0369a1; /* sky-700 */
+            font-weight: 600;
+        }
+        .nav-link {
+            transition: color 0.2s ease-in-out;
+        }
+        .nav-link:hover {
+            color: #0ea5e9; /* sky-500 */
+        }
+        .metric-button.active {
+            background-color: #0369a1; /* sky-700 */
+            color: white;
+            border-color: #0369a1; /* sky-700 */
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+        .profile-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .page-view { display: none; }
+        .page-view.active { display: block; }
+
+        /* Stili per l'analisi testuale */
+        #chart-analysis {
+            padding: 1.5rem;
+            background-color: #f1f5f9; /* slate-100 */
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+            transition: opacity 0.3s ease-in-out;
+        }
+        #chart-analysis h4 {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 700; /* font-bold */
+            color: #1e293b; /* slate-800 */
+            margin-bottom: 0.75rem; /* mb-3 */
+        }
+        #chart-analysis p {
+            color: #475569; /* slate-600 */
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="header" class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold text-slate-900">
+                Intel: Analisi di una Svolta
+            </h1>
+            <div id="main-nav" class="hidden md:flex items-center space-x-6 text-slate-600">
+                <a href="#sommario" class="nav-link">Sintesi</a>
+                <a href="#finanza" class="nav-link">Dati Finanziari</a>
+                <a href="#leadership" class="nav-link">Leadership</a>
+                <a href="#prospettive" class="nav-link">Prospettive</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-slate-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden bg-white px-6 pb-4">
+            <a href="#sommario" class="nav-link block py-2 text-slate-600">Sintesi</a>
+            <a href="#finanza" class="nav-link block py-2 text-slate-600">Dati Finanziari</a>
+            <a href="#leadership" class="nav-link block py-2 text-slate-600">Leadership</a>
+            <a href="#prospettive" class="nav-link block py-2 text-slate-600">Prospettive</a>
+        </div>
+    </header>
+
+    <div id="app-container">
+        <div id="main-content" class="page-view active">
+            <main class="container mx-auto px-6 py-8 md:py-12">
+                <section id="sommario" class="mb-16 md:mb-24 scroll-mt-20">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center text-sky-800 mb-4">Intel al Bivio: La Scommessa del Turnaround</h2>
+                    <p class="max-w-3xl mx-auto text-center text-lg text-slate-600 mb-12">
+                        Intel si trova nel punto più critico della sua storia. Questa analisi interattiva esplora le sfide finanziarie, la nuova leadership e la scommessa strategica IDM 2.0 che decideranno il futuro del gigante dei semiconduttori.
+                    </p>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-red-500 flex flex-col">
+                            <h3 class="font-bold text-xl mb-2">Crisi Finanziaria</h3>
+                            <p class="text-slate-600 flex-grow">I parametri fondamentali dipingono un quadro critico: redditività negativa e una valutazione di mercato inferiore al valore di libro, riflettendo un profondo scetticismo degli investitori.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-sky-600 flex flex-col">
+                            <h3 class="font-bold text-xl mb-2">Nuova Leadership</h3>
+                            <p class="text-slate-600 flex-grow">Il ritorno del veterano Pat Gelsinger come CEO ha dato il via a un'audace strategia di turnaround focalizzata sull'esecuzione e sulla riconquista della leadership tecnologica.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-amber-500 flex flex-col">
+                            <h3 class="font-bold text-xl mb-2">Scommessa Strategica</h3>
+                            <p class="text-slate-600 flex-grow">La strategia IDM 2.0 è sia il più grande rischio per Intel che la sua unica via per tornare alla leadership. Il suo successo dipende interamente dall'esecuzione.</p>
+                             <button class="nav-button mt-4 text-sky-700 font-semibold hover:text-sky-900 self-start" data-target="idm-content">Scopri di più &rarr;</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="finanza" class="mb-16 md:mb-24 scroll-mt-20">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center text-sky-800 mb-4">L'Odissea Finanziaria: Confronta i Trend</h2>
+                    <p class="max-w-3xl mx-auto text-center text-lg text-slate-600 mb-8">
+                        Esplora l'andamento finanziario di Intel. Seleziona uno o più indicatori per sovrapporli nel grafico e analizzare le correlazioni tra i diversi trend finanziari. Sotto il grafico, troverai un'analisi dettagliata.
+                    </p>
+                    <div class="bg-white p-4 sm:p-6 md:p-8 rounded-lg shadow-xl">
+                        <div class="flex flex-wrap justify-center gap-2 mb-6">
+                            <button class="metric-button px-4 py-2 text-sm font-medium border rounded-full transition" data-metric="revenue">Ricavi</button>
+                            <button class="metric-button px-4 py-2 text-sm font-medium border rounded-full transition" data-metric="netIncome">Utile Netto</button>
+                            <button class="metric-button px-4 py-2 text-sm font-medium border rounded-full transition" data-metric="roe">ROE</button>
+                            <button class="metric-button px-4 py-2 text-sm font-medium border rounded-full transition" data-metric="pe">P/E</button>
+                            <button class="metric-button px-4 py-2 text-sm font-medium border rounded-full transition" data-metric="pb">P/B</button>
+                            <button class="metric-button px-4 py-2 text-sm font-medium border rounded-full transition" data-metric="de">D/E</button>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="financialChart"></canvas>
+                        </div>
+                        <!-- SEZIONE ANALISI TESTUALE -->
+                        <div id="chart-analysis">
+                            <!-- Il contenuto verrà inserito qui via JavaScript -->
+                        </div>
+                    </div>
+                </section>
+
+                <section id="leadership" class="mb-16 md:mb-24 scroll-mt-20">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center text-sky-800 mb-4">Gli Architetti della Svolta</h2>
+                    <p class="max-w-3xl mx-auto text-center text-lg text-slate-600 mb-12">Clicca su un membro del team per un'analisi approfondita della sua carriera, della sua filosofia e del suo ruolo cruciale nel turnaround di Intel.</p>
+                    <div id="leadership-cards" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
+                    </div>
+                </section>
+
+                <section id="prospettive" class="scroll-mt-20">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center text-sky-800 mb-4">Prospettive per l'Investitore</h2>
+                    <p class="max-w-3xl mx-auto text-center text-lg text-slate-600 mb-12">
+                        Il futuro di Intel è una scommessa sull'esecuzione. Qui presentiamo gli indicatori chiave per monitorare il turnaround e i possibili scenari futuri.
+                    </p>
+                    <div class="grid lg:grid-cols-2 gap-12">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-6 text-slate-800">Scheda di Valutazione del Turnaround</h3>
+                            <ul id="kpi-list" class="space-y-4"></ul>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold mb-6 text-slate-800">Tre Scenari per il Futuro</h3>
+                            <div id="scenarios-list" class="space-y-6"></div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <div id="detail-content" class="page-view">
+            <main id="member-detail-container" class="container mx-auto px-6 py-8 md:py-12"></main>
+        </div>
+
+        <div id="idm-content" class="page-view">
+            <main class="container mx-auto px-6 py-8 md:py-12">
+                 <button class="back-to-main mb-8 inline-flex items-center text-sky-700 hover:text-sky-900 transition-colors">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    Torna alla Panoramica
+                </button>
+                <div class="bg-white p-8 rounded-lg shadow-xl">
+                    <h2 class="text-3xl md:text-4xl font-bold text-sky-800 mb-4">Approfondimento: La Strategia IDM 2.0</h2>
+                    <p class="text-lg text-slate-600 mb-8">
+                        IDM 2.0 (Integrated Device Manufacturing 2.0) è la strategia audace con cui Intel punta a riconquistare la leadership tecnologica nel settore dei semiconduttori entro il 2025. È una scommessa enorme che ridefinisce il modello di business dell'azienda, poggiando su tre pilastri interconnessi.
+                    </p>
+
+                    <div class="space-y-12">
+                        <div>
+                             <h3 class="text-2xl font-bold mb-4 text-slate-800 border-b-2 border-sky-200 pb-2">Pilastro 1: Rete di Fabbriche Interna d'Eccellenza</h3>
+                             <p class="text-slate-600">Intel continuerà a produrre la maggior parte dei suoi prodotti internamente, sfruttando la sua rete globale di fabbriche. L'obiettivo è riprendere il primato nella tecnologia di processo, garantendo ai prodotti Intel (CPU, GPU, etc.) l'accesso alla migliore tecnologia di produzione disponibile, un vantaggio competitivo che l'azienda aveva perso.</p>
+                        </div>
+                        <div>
+                             <h3 class="text-2xl font-bold mb-4 text-slate-800 border-b-2 border-sky-200 pb-2">Pilastro 2: Intel Foundry Services (IFS)</h3>
+                             <p class="text-slate-600">Questa è la parte più rivoluzionaria. Intel apre le sue fabbriche a clienti esterni, diventando una fonderia per conto terzi (Foundry) in diretta competizione con giganti come TSMC e Samsung. L'obiettivo è duplice: generare un nuovo, enorme flusso di ricavi e operare le costose fabbriche a pieno regime per massimizzare l'efficienza e accelerare l'apprendimento tecnologico.</p>
+                        </div>
+                        <div>
+                             <h3 class="text-2xl font-bold mb-4 text-slate-800 border-b-2 border-sky-200 pb-2">Pilastro 3: Utilizzo di Fonderie Esterne</h3>
+                             <p class="text-slate-600">Intel adotterà un approccio pragmatico, utilizzando fonderie esterne (come TSMC) per la produzione di specifiche parti dei suoi chip. Questo permette una maggiore flessibilità, ottimizzazione dei costi e l'accesso a tecnologie di processo specializzate che non produce internamente, sfruttando il meglio che l'industria ha da offrire.</p>
+                        </div>
+                         <div>
+                            <h3 class="text-2xl font-bold mb-6 text-slate-800 border-b-2 border-sky-200 pb-2">Il Cuore della Strategia: "Cinque Nodi in Quattro Anni"</h3>
+                            <p class="text-slate-600 mb-6">Per dimostrare il suo rinnovato vigore tecnologico, Intel si è impegnata in una roadmap di processo aggressiva, un vero e proprio tour de force ingegneristico.</p>
+                            <ol class="relative border-l border-gray-200 dark:border-gray-700">                  
+                                <li class="mb-10 ml-6">            
+                                    <span class="absolute flex items-center justify-center w-6 h-6 bg-green-200 rounded-full -left-3 ring-8 ring-white">
+                                        <svg class="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                    </span>
+                                    <h4 class="flex items-center mb-1 text-lg font-semibold text-gray-900">Intel 7 <span class="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Completato</span></h4>
+                                    <time class="block mb-2 text-sm font-normal leading-none text-gray-500">Lanciato nel 2021</time>
+                                    <p class="text-base font-normal text-gray-600">Equivalente al processo a 10nm Enhanced SuperFin, alimenta i processori Alder Lake e Sapphire Rapids.</p>
+                                </li>
+                                <li class="mb-10 ml-6">
+                                    <span class="absolute flex items-center justify-center w-6 h-6 bg-green-200 rounded-full -left-3 ring-8 ring-white">
+                                        <svg class="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                    </span>
+                                    <h4 class="flex items-center mb-1 text-lg font-semibold text-gray-900">Intel 4 <span class="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Completato</span></h4>
+                                    <time class="block mb-2 text-sm font-normal leading-none text-gray-500">In produzione dal 2023</time>
+                                    <p class="text-base font-normal text-gray-600">Primo utilizzo della litografia EUV. Alimenta i processori Meteor Lake.</p>
+                                </li>
+                                <li class="mb-10 ml-6">
+                                    <span class="absolute flex items-center justify-center w-6 h-6 bg-sky-200 rounded-full -left-3 ring-8 ring-white">
+                                        <svg class="w-3 h-3 text-sky-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4Z"/><path d="M0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/></svg>
+                                    </span>
+                                    <h4 class="flex items-center mb-1 text-lg font-semibold text-gray-900">Intel 3 <span class="bg-sky-100 text-sky-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">In Corso</span></h4>
+                                    <time class="block mb-2 text-sm font-normal leading-none text-gray-500">Produzione in volumi nel 2024</time>
+                                    <p class="text-base font-normal text-gray-600">Raffinamento di Intel 4, con maggiori performance ed efficienza.</p>
+                                </li>
+                                <li class="mb-10 ml-6">
+                                    <span class="absolute flex items-center justify-center w-6 h-6 bg-sky-200 rounded-full -left-3 ring-8 ring-white">
+                                         <svg class="w-3 h-3 text-sky-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4Z"/><path d="M0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/></svg>
+                                    </span>
+                                    <h4 class="flex items-center mb-1 text-lg font-semibold text-gray-900">Intel 20A <span class="bg-sky-100 text-sky-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Prossimo</span></h4>
+                                     <time class="block mb-2 text-sm font-normal leading-none text-gray-500">Previsto per fine 2024</time>
+                                    <p class="text-base font-normal text-gray-600">Introduce due tecnologie rivoluzionarie: transistor RibbonFET e alimentazione PowerVia.</p>
+                                </li>
+                                <li class="ml-6">
+                                    <span class="absolute flex items-center justify-center w-6 h-6 bg-gray-200 rounded-full -left-3 ring-8 ring-white">
+                                       <svg class="w-3 h-3 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4Z"/><path d="M0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/></svg>
+                                    </span>
+                                    <h4 class="flex items-center mb-1 text-lg font-semibold text-gray-900">Intel 18A <span class="bg-gray-100 text-gray-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Futuro</span></h4>
+                                     <time class="block mb-2 text-sm font-normal leading-none text-gray-500">Previsto per H2 2025</time>
+                                    <p class="text-base font-normal text-gray-600">Il nodo che dovrebbe riportare Intel alla leadership indiscussa delle prestazioni di processo.</p>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+
+    <footer class="bg-slate-800 text-slate-300 mt-16">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p>Questa applicazione è una visualizzazione interattiva basata su un'analisi di Intel.</p>
+            <p class="text-sm text-slate-400 mt-2">Creata a scopo informativo. Non costituisce consulenza finanziaria.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            // Dati finanziari per i grafici
+            const financialData = {
+                labels: ['2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025-Q1'],
+                datasets: {
+                    revenue: { label: 'Ricavi ($B)', data: [38.8, 35.4, 38.3, 37.6, 35.1, 43.6, 54.0, 53.3, 52.7, 55.9, 55.4, 59.4, 62.8, 70.8, 72.0, 77.9, 79.0, 63.1, 54.2, 53.1, 12.7], color: '#0ea5e9', yAxisID: 'yDollars' },
+                    netIncome: { label: 'Utile Netto ($B)', data: [8.7, 5.0, 7.0, 5.3, 4.4, 11.5, 12.9, 11.0, 9.6, 11.7, 11.4, 10.3, 9.6, 21.1, 21.0, 20.9, 19.9, 8.0, 1.7, -18.8, -0.8], color: '#10b981', yAxisID: 'yDollars' },
+                    roe: { label: 'ROE (%)', data: [22.3, 14.3, 18.2, 14.1, 11.0, 24.7, 27.5, 22.5, 17.6, 20.4, 19.8, 16.4, 13.9, 29.4, 28.0, 26.6, 22.7, 7.9, 1.5, -17.0, -17.6], color: '#8b5cf6', yAxisID: 'yPercent' },
+                    pe: { label: 'P/E (x)', data: [17.8, 23.5, 22.6, 15.8, 26.5, 10.6, 10.1, 9.7, 13.8, 15.8, 14.8, 17.1, 23.2, 10.5, 12.7, 10.08, 10.60, 8.16, -125.19, -5.39, -4.74], color: '#f97316', yAxisID: 'yRatio' },
+                    pb: { label: 'P/B (x)', data: [2.1, 1.9, 2.5, 1.5, 1.75, 1.57, 1.83, 1.42, 1.65, 2.37, 2.11, 2.11, 2.63, 2.45, 2.92, 2.26, 2.04, 1.02, 1.91, 0.83, 0.93], color: '#ec4899', yAxisID: 'yRatio' },
+                    de: { label: 'D/E (x)', data: [0.07, 0.01, 0.01, 0.24, 0.27, 0.28, 0.55, 0.65, 0.59, 0.65, 0.66, 0.71, 0.79, 0.72, 0.76, 0.89, 0.77, 0.76, 0.74, 0.87, 0.81], color: '#6366f1', yAxisID: 'yRatio' },
+                }
+            };
+            
+            // Testi per l'analisi contestuale
+            const analysisText = {
+                revenue: `<h4>Analisi dei Ricavi</h4><p>I ricavi mostrano una crescita robusta fino al 2021, seguita da un brusco calo. Questo riflette la perdita di quote di mercato nei segmenti PC e data center e la crescente pressione della concorrenza. L'era del dominio si è conclusa, lasciando spazio a una fase di profonda incertezza.</p>`,
+                netIncome: `<h4>Analisi dell'Utile Netto</h4><p>L'utile netto segue un andamento simile ai ricavi, ma il crollo recente è ancora più drammatico, culminando in perdite significative. Questo è il risultato della combinazione di ricavi in calo e degli enormi costi legati agli investimenti della strategia IDM 2.0.</p>`,
+                roe: `<h4>Analisi del ROE (Return on Equity)</h4><p>Il ROE, un indicatore chiave della redditività, è crollato da livelli eccellenti (spesso >20%) a valori nettamente negativi. Questo segnala un deterioramento della qualità del business e della sua capacità di generare profitti dal capitale degli azionisti. È il segnale più chiaro della crisi in atto.</p>`,
+                pe: `<h4>Analisi del P/E (Price-to-Earnings)</h4><p>Il rapporto P/E è diventato negativo, indicando che l'azienda sta registrando perdite. Durante l'era del dominio, il P/E era solido, per poi comprimersi durante la stagnazione. Il valore negativo attuale riflette la gravità della situazione finanziaria e la sfiducia del mercato.</p>`,
+                pb: `<h4>Analisi del P/B (Price-to-Book)</h4><p>Il rapporto P/B è sceso sotto 1.0, un segnale che il mercato valuta l'azienda meno del suo valore contabile. Questo è un classico indicatore di "deep value" per alcuni, ma anche un segnale di allarme che il mercato non crede nel valore degli asset attuali per generare profitti futuri.</p>`,
+                de: `<h4>Analisi del D/E (Debt-to-Equity)</h4><p>Il rapporto Debito/Patrimonio Netto è aumentato costantemente, passando da livelli quasi nulli a valori significativi. Questo riflette il crescente ricorso all'indebitamento per finanziare riacquisti di azioni in passato e, più recentemente, le massicce spese per la costruzione di nuove fabbriche (fabs).</p>`,
+            };
+
+            // Dati sul team di leadership -- AGGIORNATO
+            const leadershipData = [
+                { 
+                    name: 'Pat Gelsinger', 
+                    title: 'Chief Executive Officer', 
+                    img: 'https://www.intel.com/content/dam/www/central-libraries/us/en/images/xeon-sp-launch-2023-gelsinger-5-1x1.jpg.rendition.intel.web.1920.1920.jpg', 
+                    details: { 
+                        summary: "Il veterano di Intel tornato a casa. Gelsinger è un ingegnere nel cuore, tornato in Intel nel 2021 per guidare l'azienda fuori dalla crisi. È l'architetto della strategia IDM 2.0, una scommessa audace per ripristinare la leadership tecnologica e manifatturiera.",
+                        philosophy: "Mentalità da 'geek'. Crede fermamente che la migliore tecnologia vincerà. La sua leadership è caratterizzata da una profonda competenza tecnica, una passione contagiosa per l'ingegneria e una spinta implacabile verso l'esecuzione.",
+                        intelChallenge: "Eseguire la roadmap più aggressiva nella storia di Intel ('cinque nodi in quattro anni'). Deve contemporaneamente costruire un business di fonderia credibile, difendere le quote di mercato nei settori tradizionali e navigare un panorama geopolitico complesso."
+                    } 
+                },
+                { 
+                    name: 'David Zinsner', 
+                    title: 'EVP & Chief Financial Officer', 
+                    img: 'https://www.intel.com/content/dam/www/central-libraries/us/en/images/david-zinsner-1x1.jpg.rendition.intel.web.1920.1920.jpg', 
+                    details: { 
+                        summary: "Il guardiano della cassa. Con una vasta esperienza nel settore dei semiconduttori (ex CFO di Micron), Zinsner ha il compito di finanziare l'enorme spesa in conto capitale di IDM 2.0 mantenendo la disciplina finanziaria.",
+                        philosophy: "Realismo e disciplina. La sua missione è garantire che l'allocazione del capitale sia rigorosa e che ogni investimento sia mirato a un chiaro ritorno. Deve bilanciare le ambizioni a lungo termine con la necessità di mostrare progressi finanziari a breve termine a Wall Street.",
+                        intelChallenge: "Gestire un 'cash burn' senza precedenti. Deve comunicare in modo trasparente al mercato i costi del turnaround, giustificando le perdite attuali con la promessa di una redditività futura e di un modello di business più forte e diversificato."
+                    } 
+                },
+                { 
+                    name: 'Michelle Johnston Holthaus', 
+                    title: 'EVP & GM, Client Computing', 
+                    img: 'https://www.intel.com/content/dam/www/central-libraries/us/en/images/michelle-johnston-holthaus-1-1x1.jpg.rendition.intel.web.1920.1920.jpg', 
+                    details: { 
+                        summary: "La veterana che difende il business principale. Con quasi trent'anni di esperienza in Intel, guida il Client Computing Group (CCG), il business storico dei PC che rimane una fonte di entrate cruciale.",
+                        philosophy: "Focalizzazione sul cliente. La sua profonda conoscenza del mercato e le solide relazioni con i partner OEM sono fondamentali. La sua priorità è lanciare prodotti competitivi per riconquistare la leadership nelle prestazioni e nell'innovazione dei PC.",
+                        intelChallenge: "Fermare l'erosione delle quote di mercato. Deve competere ferocemente contro AMD, Qualcomm e i chip basati su ARM di Apple, spingendo al contempo l'adozione di nuove categorie di prodotti come i PC AI."
+                    } 
+                },
+                { 
+                    name: 'Stuart Pann', 
+                    title: 'SVP & GM, Intel Foundry', 
+                    img: 'https://www.intel.com/content/dam/www/central-libraries/us/en/images/stuart-pann-1x1.jpg.rendition.intel.web.1920.1920.jpg',
+                    details: { 
+                        summary: "L'uomo che deve costruire la fabbrica del futuro, per gli altri. Pann è responsabile della parte più rivoluzionaria di IDM 2.0: trasformare Intel in una fonderia di livello mondiale per clienti esterni.",
+                        philosophy: "Mentalità di servizio. Per avere successo, Intel deve abbandonare la sua vecchia cultura chiusa e adottare un approccio 'customer-first'. La fiducia dei clienti si guadagna attraverso un'esecuzione impeccabile e una trasparenza assoluta.",
+                        intelChallenge: "Costruire un business da zero in un mercato dominato da giganti come TSMC e Samsung. Deve convincere i rivali storici di Intel a fidarsi dei suoi processi produttivi, garantendo prestazioni, puntualità e riservatezza."
+                    } 
+                },
+                { 
+                    name: 'Sachin Katti', 
+                    title: 'SVP & GM, Network and Edge', 
+                    img: 'https://www.intel.com/content/dam/www/central-libraries/us/en/images/sachin-katti-1x1.jpg.rendition.intel.web.1920.1920.jpg',
+                    details: { 
+                        summary: "Il pioniere della connettività e dell'IA all'edge. Katti guida il Network and Edge Group (NEX), un'area di crescita fondamentale per Intel che spazia dal 5G e vRAN all'IoT e all'intelligenza artificiale distribuita.",
+                        philosophy: "Il software è la chiave. Per sbloccare il potenziale dell'hardware di Intel nell'edge, è necessario un ecosistema software aperto e robusto. Katti promuove standard aperti per accelerare l'innovazione e l'adozione.",
+                        intelChallenge: "Capitalizzare sulle tendenze convergenti di IA, 5G e edge computing. Deve creare piattaforme hardware e software che consentano ai clienti di implementare carichi di lavoro complessi al di fuori del data center, un mercato altamente competitivo e frammentato."
+                    } 
+                }
+            ];
+
+            // KPI e Scenari
+            const kpiData = [
+                { icon: '🏭', title: 'Esecuzione della Fonderia', items: ['Consegna puntuale di Intel 18A (H2 2025)', 'Annunci di clienti "whale" (grandi partner)', 'Percorso verso la redditività della Foundry (pareggio entro 2027)'] },
+                { icon: '💻', title: 'Competitività dei Prodotti', items: ['Stabilizzazione delle quote di mercato PC & Data Center', 'Crescita dei ricavi degli acceleratori Gaudi AI', 'Roadmap AI competitiva contro Nvidia'] },
+                { icon: '💰', title: 'Disciplina Finanziaria', items: ['Ritorno a margini lordi sani (>50%)', 'Flusso di cassa libero positivo', 'Controllo del debito e gestione efficiente del capitale'] },
+                { icon: '👥', title: 'Stabilità della Leadership', items: ['Nessuna partenza di alto livello nei ruoli chiave', 'Consistenza nella comunicazione strategica'] }
+            ];
+
+            const scenariosData = [
+                { color: 'green', title: 'Caso "Deep Value"', description: 'Il mercato prezza un fallimento quasi totale. Se il team di Tan esegue anche solo moderatamente bene, il potenziale di rivalutazione è enorme, poiché il titolo è scambiato sotto il valore di libro.' },
+                { color: 'amber', title: 'Caso "Scommessa ad Alto Rischio"', description: 'L\'esito è binario. Il successo significa un ritorno multiplo sul capitale. Il fallimento potrebbe significare una svalutazione permanente, con l\'azienda che lotta sotto una montagna di debiti e asset non competitivi.' },
+                { color: 'red', title: 'Caso "Trappola di Valore"', description: 'L\'azienda continua a bruciare cassa, non riesce a conquistare clienti significativi per la fonderia e il suo business di prodotti si erode. Il basso P/B si rivela un miraggio, poiché il valore di libro stesso diminuisce.' }
+            ];
+
+            const ctx = document.getElementById('financialChart').getContext('2d');
+            let chart;
+            let activeMetrics = ['revenue'];
+
+            // Aggiorna sia il grafico che il testo
+            function updateChartAndAnalysis() {
+                const datasets = activeMetrics.map(metric => {
+                    const datasetConfig = financialData.datasets[metric];
+                    return {
+                        label: datasetConfig.label,
+                        data: datasetConfig.data,
+                        borderColor: datasetConfig.color,
+                        backgroundColor: `${datasetConfig.color}33`,
+                        fill: 'origin',
+                        yAxisID: datasetConfig.yAxisID,
+                        tension: 0.1,
+                        borderWidth: 2,
+                        pointRadius: 2,
+                        pointHoverRadius: 5
+                    };
+                });
+                
+                chart.data.datasets = datasets;
+
+                const activeAxes = new Set(datasets.map(d => d.yAxisID));
+                const showAxesWhenEmpty = activeMetrics.length === 0;
+
+                Object.keys(chart.options.scales).forEach(axisId => {
+                    if (axisId.startsWith('y')) {
+                        chart.options.scales[axisId].display = showAxesWhenEmpty || activeAxes.has(axisId);
+                    }
+                });
+
+                chart.update();
+                updateAnalysisText(activeMetrics);
+            }
+
+            // Aggiorna solo il blocco di analisi testuale
+            function updateAnalysisText(metrics) {
+                const analysisContainer = document.getElementById('chart-analysis');
+                if (metrics.length === 0) {
+                    analysisContainer.innerHTML = '<h4>Seleziona una metrica dal menu sopra per visualizzare l\'analisi corrispondente.</h4>';
+                } else {
+                    const lastMetric = metrics[metrics.length - 1];
+                    analysisContainer.innerHTML = analysisText[lastMetric] || '';
+                }
+            }
+            
+            // Inizializza il grafico
+            function initializeChart() {
+                chart = new Chart(ctx, {
+                    type: 'line',
+                    data: { labels: financialData.labels, datasets: [] },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            x: { ticks: { color: '#475569' }, grid: { display: false } },
+                            yDollars: { type: 'linear', position: 'left', display: false, grid: { color: '#e2e8f0' }, ticks: { color: '#0ea5e9', callback: function(value) { return value + 'B'; } }, title: { display: true, text: 'Miliardi ($)', color: '#0ea5e9' } },
+                            yPercent: { type: 'linear', position: 'right', display: false, grid: { drawOnChartArea: false }, ticks: { color: '#8b5cf6', callback: function(value) { return value + '%'; } }, title: { display: true, text: 'Percentuale (%)', color: '#8b5cf6' } },
+                            yRatio: { type: 'linear', position: 'right', display: false, grid: { drawOnChartArea: false }, ticks: { color: '#f97316' }, title: { display: true, text: 'Rapporto (x)', color: '#f97316' } }
+                        },
+                        plugins: {
+                            legend: { display: true, position: 'top', labels: { color: '#334155' } },
+                            tooltip: { callbacks: { label: function(context) { let label = context.dataset.label || ''; if (label) { label += ': '; } if (context.parsed.y !== null) { label += context.parsed.y.toFixed(2); } return label; } } }
+                        }
+                    }
+                });
+                updateChartAndAnalysis();
+            }
+
+            // Gestisce i click sui pulsanti delle metriche
+            const metricButtons = document.querySelectorAll('.metric-button');
+            metricButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const metric = button.dataset.metric;
+                    button.classList.toggle('active');
+                    if (activeMetrics.includes(metric)) {
+                        activeMetrics = activeMetrics.filter(m => m !== metric);
+                    } else {
+                        activeMetrics.push(metric);
+                    }
+                    updateChartAndAnalysis();
+                });
+            });
+
+            // Gestione della navigazione tra le pagine
+            function showPage(pageId) {
+                document.querySelectorAll('.page-view').forEach(page => {
+                    page.classList.remove('active');
+                });
+                document.getElementById(pageId).classList.add('active');
+                window.scrollTo(0, 0);
+            }
+            
+            // Crea le card per il team di leadership
+            function setupLeadershipCards() {
+                const container = document.getElementById('leadership-cards');
+                const detailContainer = document.getElementById('member-detail-container');
+                
+                container.innerHTML = leadershipData.map((person, index) => `
+                    <div class="bg-white rounded-lg shadow-md p-6 text-center cursor-pointer profile-card nav-button" data-index="${index}" data-target="detail-content">
+                        <img src="${person.img}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/64748b/FFFFFF?text=${person.name.split(' ').map(n=>n[0]).join('')}';" alt="Foto di ${person.name}" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover pointer-events-none">
+                        <h4 class="font-bold text-lg text-slate-900 pointer-events-none">${person.name}</h4>
+                        <p class="text-sky-700 text-sm pointer-events-none">${person.title}</p>
+                    </div>
+                `).join('');
+
+                container.addEventListener('click', (e) => {
+                    const card = e.target.closest('.profile-card');
+                    if (card) {
+                        const person = leadershipData[card.dataset.index];
+                        detailContainer.innerHTML = `
+                            <button class="back-to-main mb-8 inline-flex items-center text-sky-700 hover:text-sky-900 transition-colors">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                                Torna alla Panoramica
+                            </button>
+                            <div class="grid md:grid-cols-3 gap-8 md:gap-12 bg-white p-8 rounded-lg shadow-xl">
+                                <div class="md:col-span-1 text-center">
+                                    <img src="${person.img}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/64748b/FFFFFF?text=${person.name.split(' ').map(n=>n[0]).join('')}';" alt="Foto di ${person.name}" class="w-40 h-40 rounded-full mx-auto mb-4 object-cover">
+                                    <h2 class="text-3xl font-bold text-slate-900">${person.name}</h2>
+                                    <p class="text-xl text-sky-700">${person.title}</p>
+                                </div>
+                                <div class="md:col-span-2 space-y-8">
+                                    <div><h3 class="text-2xl font-bold border-b-2 border-sky-200 pb-2 mb-4 text-sky-800">Profilo Esecutivo</h3><p class="text-lg text-slate-600">${person.details.summary}</p></div>
+                                    <div><h3 class="text-2xl font-bold border-b-2 border-sky-200 pb-2 mb-4 text-sky-800">Filosofia di Management</h3><p class="text-slate-600">${person.details.philosophy}</p></div>
+                                    <div><h3 class="text-2xl font-bold border-b-2 border-sky-200 pb-2 mb-4 text-sky-800">La Sfida in Intel</h3><p class="text-slate-600">${person.details.intelChallenge}</p></div>
+                                </div>
+                            </div>`;
+                        showPage('detail-content');
+                        detailContainer.querySelector('.back-to-main').addEventListener('click', () => showPage('main-content'));
+                    }
+                });
+            }
+
+            // Imposta la navigazione principale e dei pulsanti
+            function setupNavigation() {
+                document.body.addEventListener('click', function(e) {
+                    const navButton = e.target.closest('.nav-button');
+                    if(navButton) {
+                        const targetId = navButton.dataset.target;
+                        if (targetId && targetId !== 'detail-content') {
+                             showPage(targetId);
+                        }
+                    }
+                    if (e.target.closest('.back-to-main')) {
+                        showPage('main-content');
+                    }
+                });
+            }
+
+            // Crea le liste di KPI e scenari
+            function setupKPIs() {
+                const container = document.getElementById('kpi-list');
+                container.innerHTML = kpiData.map(kpi => `<li class="bg-white p-4 rounded-lg shadow-sm"><h4 class="font-semibold text-lg flex items-center"><span class="text-2xl mr-3">${kpi.icon}</span><span>${kpi.title}</span></h4><ul class="list-disc list-inside mt-2 text-slate-600 pl-4 space-y-1">${kpi.items.map(item => `<li>${item}</li>`).join('')}</ul></li>`).join('');
+            }
+
+            function setupScenarios() {
+                const container = document.getElementById('scenarios-list');
+                const colorMap = { green: 'border-green-500', amber: 'border-amber-500', red: 'border-red-500' };
+                container.innerHTML = scenariosData.map(scenario => `<div class="bg-white p-6 rounded-lg shadow-sm border-l-4 ${colorMap[scenario.color]}"><h4 class="font-bold text-xl mb-2 text-slate-800">${scenario.title}</h4><p class="text-slate-600">${scenario.description}</p></div>`).join('');
+            }
+
+            // Gestisce il menu mobile
+            function setupMobileMenu() {
+                const button = document.getElementById('mobile-menu-button');
+                const menu = document.getElementById('mobile-menu');
+                button.addEventListener('click', () => menu.classList.toggle('hidden'));
+                menu.addEventListener('click', (e) => { if(e.target.tagName === 'A') menu.classList.add('hidden'); });
+            }
+
+            // Evidenzia la sezione corrente nel menu di navigazione
+            function setupNavHighlight() {
+                const sections = document.querySelectorAll('#main-content section');
+                const navLinks = document.querySelectorAll('#main-nav .nav-link, #mobile-menu .nav-link');
+                window.addEventListener('scroll', () => {
+                    let current = '';
+                    if (document.getElementById('main-content').classList.contains('active')) {
+                        sections.forEach(section => {
+                            const sectionTop = section.offsetTop;
+                            if (pageYOffset >= sectionTop - 100) {
+                                current = section.getAttribute('id');
+                            }
+                        });
+                    }
+                    navLinks.forEach(link => {
+                        link.classList.remove('active-nav');
+                        if (current && link.getAttribute('href').includes(current)) {
+                            link.classList.add('active-nav');
+                        }
+                    });
+                });
+            }
+
+            // --- INIZIALIZZAZIONE DELL'APPLICAZIONE ---
+            document.querySelector('.metric-button[data-metric="revenue"]').classList.add('active');
+            initializeChart();
+            setupLeadershipCards();
+            setupNavigation();
+            setupKPIs();
+            setupScenarios();
+            setupMobileMenu();
+            setupNavHighlight();
+        });
+    </script>
+</body>
+</html>
