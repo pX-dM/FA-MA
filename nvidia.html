@@ -454,10 +454,13 @@
 
             function initializeChart() {
                 const ctx = document.getElementById('financialChart').getContext('2d');
-                const chartDatasets = Object.values(financialData.datasets).map(ds => ({
-                    ...ds,
-                    type: 'line'
-                }));
+                const chartDatasets = Object.keys(financialData.datasets).map(key => {
+                    return {
+                        ...financialData.datasets[key],
+                        id: key, // Add a unique ID for robust lookup
+                        type: 'line'
+                    };
+                });
 
                 financialChart = new Chart(ctx, {
                     type: 'line',
@@ -547,17 +550,34 @@
                     }
                 });
             }
-
+            
             function updateChart() {
+                let yDollarsVisible = false;
+                let yRatiosVisible = false;
+
                 const buttons = document.querySelectorAll('.metric-button');
                 buttons.forEach(button => {
                     const metric = button.dataset.metric;
-                    const dataset = financialChart.data.datasets.find(d => d.label.toLowerCase().includes(metric.replace('_', ' ')));
+                    // Find dataset by its unique 'id'
+                    const dataset = financialChart.data.datasets.find(ds => ds.id === metric);
                     
                     if (dataset) {
-                        dataset.hidden = !button.classList.contains('active');
+                        const isActive = button.classList.contains('active');
+                        dataset.hidden = !isActive;
+
+                        if (isActive) {
+                            if (dataset.yAxisID === 'yDollars') {
+                                yDollarsVisible = true;
+                            } else if (dataset.yAxisID === 'yRatios') {
+                                yRatiosVisible = true;
+                            }
+                        }
                     }
                 });
+                
+                financialChart.options.scales.yDollars.display = yDollarsVisible;
+                financialChart.options.scales.yRatios.display = yRatiosVisible;
+                
                 financialChart.update();
             }
 
@@ -574,6 +594,8 @@
                         updateChart();
                     });
                 });
+                // Initial call to set axis visibility correctly on page load
+                updateChart();
             }
 
             function populateCompetitionTable() {
