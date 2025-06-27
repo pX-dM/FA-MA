@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisi Interattiva: Qualcomm</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+            color: #1e293b; /* slate-800 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 450px;
+            max-height: 60vh;
+        }
+        .metric-button {
+            transition: all 0.2s ease-in-out;
+            border: 1px solid #cbd5e1; /* slate-300 */
+            color: #475569; /* slate-600 */
+        }
+        .metric-button:hover {
+            background-color: #f1f5f9; /* slate-100 */
+            border-color: #94a3b8; /* slate-400 */
+        }
+        .metric-button.active {
+            background-color: #0ea5e9; /* sky-500 */
+            color: white;
+            border-color: #0ea5e9; /* sky-500 */
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+        #chart-analysis {
+            padding: 1.5rem;
+            background-color: #f1f5f9; /* slate-100 */
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+            transition: opacity 0.3s ease-in-out;
+            min-height: 120px;
+        }
+        #chart-analysis h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.75rem;
+        }
+        #chart-analysis p {
+            color: #475569;
+            line-height: 1.6;
+        }
+        .section-title {
+            color: #0f172a; /* slate-900 */
+        }
+        .nav-link {
+            transition: color 0.2s ease-in-out;
+        }
+        .nav-link:hover {
+            color: #0ea5e9; /* sky-500 */
+        }
+        .page-view { display: none; }
+        .page-view.active { display: block; animation: fadeIn 0.5s ease-in-out; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .leader-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .leader-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/90 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-sky-100 text-sky-600 p-2 rounded-lg">
+                     <i data-lucide="cpu"></i>
+                </div>
+                <h1 class="text-xl font-bold text-slate-800">Analisi Qualcomm</h1>
+            </div>
+            <div class="hidden md:flex items-center space-x-6 text-slate-600 font-medium">
+                <a href="#sommario" class="nav-link main-nav-link">Sintesi</a>
+                <a href="#roadmap" class="nav-link main-nav-link">Roadmap</a>
+                <a href="#finanza" class="nav-link main-nav-link">Dati Finanziari</a>
+                <a href="#leadership" class="nav-link main-nav-link">Leadership</a>
+                <a href="#conclusioni" class="nav-link main-nav-link">Conclusioni</a>
+            </div>
+        </nav>
+    </header>
+
+    <div id="app-container">
+        <!-- VISTA PRINCIPALE -->
+        <div id="main-content" class="page-view active">
+            <main class="container mx-auto px-6 py-8 md:py-12">
+                <section id="sommario" class="mb-16 md:mb-24 scroll-mt-20">
+                    <div class="text-center">
+                        <h2 class="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight">Qualcomm: Architettura del Futuro</h2>
+                        <p class="mt-6 max-w-3xl mx-auto text-lg text-slate-600">Un'analisi interattiva della roadmap strategica e della salute finanziaria che definiranno il prossimo decennio del leader dei semiconduttori.</p>
+                    </div>
+                    <div class="mt-12 grid md:grid-cols-3 gap-8">
+                         <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-sky-500 flex flex-col">
+                            <h3 class="font-bold text-xl mb-2">Dominio Mobile & AI</h3>
+                            <p class="text-slate-600 mb-4 flex-grow">Leader nel 5G, Qualcomm sta guidando la transizione verso l'AI on-device, trasformando smartphone e PC in assistenti intelligenti personali.</p>
+                            <button class="nav-button mt-auto text-sky-600 font-semibold hover:text-sky-800 self-start" data-target="mobile-detail">Scopri di più &rarr;</button>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-500 flex flex-col">
+                            <h3 class="font-bold text-xl mb-2">Espansione Automotive</h3>
+                            <p class="text-slate-600 mb-4 flex-grow">Con lo "Snapdragon Digital Chassis", l'azienda sta diventando il sistema nervoso centrale dei veicoli di nuova generazione.</p>
+                            <button class="nav-button mt-auto text-purple-600 font-semibold hover:text-purple-800 self-start" data-target="automotive-detail">Scopri di più &rarr;</button>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-500 flex flex-col">
+                            <h3 class="font-bold text-xl mb-2">Rivoluzione IoT</h3>
+                            <p class="text-slate-600 mb-4 flex-grow">Dalle città intelligenti alle fabbriche connesse, Qualcomm sta costruendo le fondamenta per un mondo di dispositivi intelligenti.</p>
+                            <button class="nav-button mt-auto text-green-600 font-semibold hover:text-green-800 self-start" data-target="iot-detail">Scopri di più &rarr;</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="roadmap" class="mb-16 md:mb-24 scroll-mt-20">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center section-title mb-4">Roadmap Prodotti: I Pilastri della Crescita</h2>
+                    <p class="max-w-3xl mx-auto text-center text-lg text-slate-600 mb-12">La strategia di Qualcomm poggia su tre aree di innovazione interconnesse, mirando a estendere il proprio dominio tecnologico ben oltre gli smartphone.</p>
+                    <div class="space-y-12">
+                        <!-- Mobile -->
+                        <div class="grid md:grid-cols-5 gap-8 items-center">
+                            <div class="md:col-span-2 bg-white p-6 rounded-lg shadow-lg">
+                                <div class="flex items-center gap-4 mb-4">
+                                    <div class="bg-blue-100 text-blue-600 p-3 rounded-lg"><i data-lucide="smartphone"></i></div>
+                                    <h3 class="text-2xl font-bold text-slate-800">Mobile: Snapdragon & AI</h3>
+                                </div>
+                                <p class="text-slate-600">Il cuore del business. L'obiettivo è consolidare la leadership spingendo sull'AI on-device e sui processori per PC a basso consumo (Copilot+ PC), sfidando direttamente Apple e Intel.</p>
+                            </div>
+                            <div class="md:col-span-3">
+                                <ol class="relative border-l border-slate-300">                  
+                                    <li class="mb-10 ml-6">            
+                                        <span class="absolute flex items-center justify-center w-6 h-6 bg-blue-200 rounded-full -left-3 ring-8 ring-white"><i data-lucide="zap" class="w-3 h-3 text-blue-700"></i></span>
+                                        <h4 class="flex items-center mb-1 text-lg font-semibold text-gray-900">Snapdragon X Elite & Plus</h4>
+                                        <time class="block mb-2 text-sm font-normal leading-none text-gray-500">Lanciati nel 2024</time>
+                                        <p class="text-base font-normal text-gray-600">Chip per PC con NPU (Neural Processing Unit) leader di settore, progettati per l'era dei PC Copilot+ con AI integrata.</p>
+                                    </li>
+                                    <li class="mb-10 ml-6">
+                                        <span class="absolute flex items-center justify-center w-6 h-6 bg-blue-200 rounded-full -left-3 ring-8 ring-white"><i data-lucide="sparkles" class="w-3 h-3 text-blue-700"></i></span>
+                                        <h4 class="mb-1 text-lg font-semibold text-gray-900">Snapdragon 8 Gen 4</h4>
+                                        <time class="block mb-2 text-sm font-normal leading-none text-gray-500">Previsto per fine 2024</time>
+                                        <p class="text-base font-normal text-gray-600">Prossimo chip di punta per smartphone, atteso con i nuovi core Oryon personalizzati per un balzo prestazionale.</p>
+                                    </li>
+                                    <li class="ml-6">
+                                        <span class="absolute flex items-center justify-center w-6 h-6 bg-blue-200 rounded-full -left-3 ring-8 ring-white"><i data-lucide="cpu" class="w-3 h-3 text-blue-700"></i></span>
+                                        <h4 class="mb-1 text-lg font-semibold text-gray-900">Snapdragon 8 Elite 2 (Nome in codice)</h4>
+                                         <time class="block mb-2 text-sm font-normal leading-none text-gray-500">Previsto per il 2025-2026</time>
+                                        <p class="text-base font-normal text-gray-600">Strategia a doppio fornitore (TSMC e Samsung) per la produzione del futuro chip di punta, con possibile debutto di un processo a 2nm.</p>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                         <!-- Automotive -->
+                        <div class="grid md:grid-cols-5 gap-8 items-center">
+                            <div class="md:col-span-2 bg-white p-6 rounded-lg shadow-lg">
+                                 <div class="flex items-center gap-4 mb-4">
+                                    <div class="bg-purple-100 text-purple-600 p-3 rounded-lg"><i data-lucide="car"></i></div>
+                                    <h3 class="text-2xl font-bold text-slate-800">Automotive</h3>
+                                </div>
+                                <p class="text-slate-600">Trasformare l'auto in un dispositivo connesso. La piattaforma "Snapdragon Digital Chassis" offre una soluzione integrata per cockpit digitale, telematica, connettività e sistemi di guida assistita (ADAS).</p>
+                            </div>
+                            <div class="md:col-span-3">
+                                 <ol class="relative border-l border-slate-300">                  
+                                    <li class="mb-10 ml-6">            
+                                        <span class="absolute flex items-center justify-center w-6 h-6 bg-purple-200 rounded-full -left-3 ring-8 ring-white"><i data-lucide="satellite-dish" class="w-3 h-3 text-purple-700"></i></span>
+                                        <h4 class="mb-1 text-lg font-semibold text-gray-900">Snapdragon Auto Connectivity</h4>
+                                        <time class="block mb-2 text-sm font-normal leading-none text-gray-500">In espansione</time>
+                                        <p class="text-base font-normal text-gray-600">Fornisce connettività 5G, Wi-Fi, Bluetooth e C-V2X (Vehicle-to-Everything) per la sicurezza e i servizi connessi.</p>
+                                    </li>
+                                     <li class="mb-10 ml-6">            
+                                        <span class="absolute flex items-center justify-center w-6 h-6 bg-purple-200 rounded-full -left-3 ring-8 ring-white"><i data-lucide="shield" class="w-3 h-3 text-purple-700"></i></span>
+                                        <h4 class="mb-1 text-lg font-semibold text-gray-900">Snapdragon Ride (ADAS)</h4>
+                                        <time class="block mb-2 text-sm font-normal leading-none text-gray-500">In evoluzione</time>
+                                        <p class="text-base font-normal text-gray-600">Piattaforma aperta e scalabile per la guida assistita e autonoma, rafforzata dall'acquisizione di Autotalks per la tecnologia V2X.</p>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                         <!-- IoT -->
+                         <div class="grid md:grid-cols-5 gap-8 items-center">
+                            <div class="md:col-span-2 bg-white p-6 rounded-lg shadow-lg">
+                                <div class="flex items-center gap-4 mb-4">
+                                    <div class="bg-green-100 text-green-600 p-3 rounded-lg"><i data-lucide="network"></i></div>
+                                    <h3 class="text-2xl font-bold text-slate-800">IoT & Edge Computing</h3>
+                                </div>
+                                <p class="text-slate-600">Portare l'intelligenza artificiale e la connettività su miliardi di dispositivi. La strategia si concentra su soluzioni ottimizzate per l'industria, il retail, la logistica e le smart cities.</p>
+                            </div>
+                            <div class="md:col-span-3">
+                                <ol class="relative border-l border-slate-300">                  
+                                    <li class="mb-10 ml-6">            
+                                        <span class="absolute flex items-center justify-center w-6 h-6 bg-green-200 rounded-full -left-3 ring-8 ring-white"><i data-lucide="feather" class="w-3 h-3 text-green-700"></i></span>
+                                        <h4 class="mb-1 text-lg font-semibold text-gray-900">Piattaforme Dragonwing</h4>
+                                        <time class="block mb-2 text-sm font-normal leading-none text-gray-500">In corso</time>
+                                        <p class="text-base font-normal text-gray-600">Chip specifici (es. QCS6490) per applicazioni IoT industriali, con supporto per AI, computer vision e grafica avanzata.</p>
+                                    </li>
+                                     <li class="ml-6">            
+                                        <span class="absolute flex items-center justify-center w-6 h-6 bg-green-200 rounded-full -left-3 ring-8 ring-white"><i data-lucide="brain-circuit" class="w-3 h-3 text-green-700"></i></span>
+                                        <h4 class="mb-1 text-lg font-semibold text-gray-900">Acquisizione Edge Impulse</h4>
+                                        <time class="block mb-2 text-sm font-normal leading-none text-gray-500">Annunciata nel 2025</time>
+                                        <p class="text-base font-normal text-gray-600">Mossa strategica per rafforzare gli strumenti di sviluppo per l'AI on-device, semplificando la creazione di modelli per l'ecosistema Qualcomm.</p>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="finanza" class="mb-16 md:mb-24 scroll-mt-20">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center section-title mb-4">Analisi Finanziaria Interattiva</h2>
+                    <p class="max-w-3xl mx-auto text-center text-lg text-slate-600 mb-8">
+                        Esplora 20 anni di storia finanziaria. Seleziona uno o più indicatori per visualizzarli sul grafico e analizzarne le correlazioni. Sotto, troverai un'analisi dettagliata per l'ultimo indicatore selezionato.
+                    </p>
+                    <div class="bg-white p-4 sm:p-6 md:p-8 rounded-lg shadow-xl">
+                        <div class="flex flex-wrap justify-center gap-2 mb-6">
+                            <button class="metric-button px-4 py-2 text-sm font-medium rounded-full" data-metric="revenue">Ricavi</button>
+                            <button class="metric-button px-4 py-2 text-sm font-medium rounded-full" data-metric="netIncome">Utile Netto</button>
+                            <button class="metric-button px-4 py-2 text-sm font-medium rounded-full" data-metric="roe">ROE</button>
+                            <button class="metric-button px-4 py-2 text-sm font-medium rounded-full" data-metric="pe">P/E</button>
+                            <button class="metric-button px-4 py-2 text-sm font-medium rounded-full" data-metric="pb">P/B</button>
+                            <button class="metric-button px-4 py-2 text-sm font-medium rounded-full" data-metric="de">D/E</button>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="financialChart"></canvas>
+                        </div>
+                        <div id="chart-analysis"></div>
+                    </div>
+                </section>
+
+                <section id="leadership" class="mb-16 md:mb-24 scroll-mt-20">
+                    <div class="text-center mb-12">
+                        <h3 class="section-title text-3xl md:text-4xl font-bold tracking-tight">Leadership e Visione Strategica</h3>
+                        <p class="mt-4 text-lg text-slate-500 max-w-2xl mx-auto">Un'analisi della squadra che sta guidando la trasformazione di Qualcomm. Clicca su un profilo per un'analisi dettagliata.</p>
+                    </div>
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+                        <div class="nav-button leader-card bg-white rounded-lg shadow-md p-6 flex flex-col text-center cursor-pointer" data-target="leader-palkhiwala">
+                            <h5 class="font-bold text-slate-800">Akash Palkhiwala</h5>
+                            <p class="text-sm text-indigo-600 font-semibold">Chief Financial Officer</p>
+                            <p class="mt-4 text-sky-600 font-medium">Vedi Profilo &rarr;</p>
+                        </div>
+                        <div class="nav-button leader-card bg-white rounded-lg shadow-md p-6 flex flex-col text-center cursor-pointer" data-target="leader-rogers">
+                            <h5 class="font-bold text-slate-800">Alex Rogers</h5>
+                            <p class="text-sm text-amber-600 font-semibold">President, QTL</p>
+                            <p class="mt-4 text-sky-600 font-medium">Vedi Profilo &rarr;</p>
+                        </div>
+                        <div class="nav-button leader-card bg-white rounded-lg shadow-md p-6 flex flex-col text-center cursor-pointer" data-target="leader-thompson">
+                            <h5 class="font-bold text-slate-800">Jim Thompson</h5>
+                            <p class="text-sm text-rose-600 font-semibold">Chief Technology Officer</p>
+                            <p class="mt-4 text-sky-600 font-medium">Vedi Profilo &rarr;</p>
+                        </div>
+                        <div class="nav-button leader-card bg-white rounded-lg shadow-md p-6 flex flex-col text-center cursor-pointer" data-target="leader-mcguire">
+                            <h5 class="font-bold text-slate-800">Don McGuire</h5>
+                            <p class="text-sm text-teal-600 font-semibold">Chief Marketing Officer</p>
+                            <p class="mt-4 text-sky-600 font-medium">Vedi Profilo &rarr;</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="conclusioni" class="scroll-mt-20">
+                    <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-xl border-t-4 border-sky-500">
+                        <h2 class="text-3xl font-bold text-center section-title mb-6">Conclusioni Strategiche</h2>
+                        <p class="text-slate-600 text-lg leading-relaxed">
+                            Qualcomm si trova in un momento di profonda trasformazione. La leadership esperta di Cristiano Amon e del suo team, unita a una solida base finanziaria e a un portafoglio tecnologico all'avanguardia, fornisce all'azienda gli strumenti per affrontare le sfide attuali e per capitalizzare le opportunità future. Il successo dipenderà dalla capacità di Qualcomm di eseguire efficacemente la sua strategia di diversificazione, di mantenere la sua leadership tecnologica e di navigare in un panorama competitivo e normativo in continua evoluzione. L'analista finanziario dovrà monitorare attentamente i progressi di Qualcomm in queste aree per valutare le sue prospettive a lungo termine.
+                        </p>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+        
+        <!-- VISTE DI DETTAGLIO -->
+        <div id="leader-palkhiwala" class="page-view">
+             <main class="container mx-auto px-6 py-8 md:py-12">
+                <button class="back-to-main mb-8 inline-flex items-center text-sky-600 hover:text-sky-800 font-semibold transition-colors">
+                   <i data-lucide="arrow-left" class="w-5 h-5 mr-2"></i>Torna alla Panoramica
+               </button>
+               <div class="bg-white p-8 rounded-lg shadow-xl">
+                   <h2 class="text-3xl md:text-4xl font-bold text-indigo-800 mb-2">Akash Palkhiwala</h2>
+                   <p class="text-xl font-medium text-indigo-600 mb-8">Chief Financial Officer</p>
+                   <div class="space-y-8 text-lg text-slate-700 leading-relaxed">
+                       <p>Palkhiwala è il guardiano della strategia finanziaria di Qualcomm. Con oltre 20 anni di esperienza all'interno dell'azienda, possiede una conoscenza intima dei suoi cicli di business e delle sue leve di profitto. È salito al ruolo di CFO nel 2019, in un periodo turbolento segnato dalla conclusione delle ostilità con Apple.</p>
+                       <div class="p-6 bg-slate-50 rounded-lg">
+                           <h4 class="font-bold text-slate-800 mb-2">Successi e Gestione delle Crisi:</h4>
+                           <p>Il suo più grande successo è stato stabilizzare la nave finanziaria dopo le battaglie legali. Ha gestito con abilità il capitale, orchestrando riacquisti di azioni strategici e mantenendo un bilancio solido. Durante la crisi dei semiconduttori post-pandemia, ha saputo gestire le catene di approvvigionamento e la pressione sui margini, garantendo a Qualcomm le risorse per continuare a investire massicciamente in R&D.</p>
+                       </div>
+                       <div>
+                           <h4 class="font-bold text-slate-800 mb-2">Affrontare i Fallimenti:</h4>
+                           <p>Una delle maggiori sfide per Palkhiwala è stata la gestione delle aspettative del mercato durante il calo della domanda di smartphone del 2022-2023. Invece di nascondere le difficoltà, la sua strategia comunicativa si è basata sulla trasparenza, focalizzando l'attenzione degli investitori sui progressi della diversificazione in Automotive e IoT, dimostrando una visione a lungo termine e trasformando una potenziale crisi di fiducia in una prova di resilienza strategica.</p>
+                       </div>
+                   </div>
+               </div>
+           </main>
+        </div>
+        <div id="leader-rogers" class="page-view">
+            <main class="container mx-auto px-6 py-8 md:py-12">
+                <button class="back-to-main mb-8 inline-flex items-center text-sky-600 hover:text-sky-800 font-semibold transition-colors">
+                   <i data-lucide="arrow-left" class="w-5 h-5 mr-2"></i>Torna alla Panoramica
+               </button>
+               <div class="bg-white p-8 rounded-lg shadow-xl">
+                   <h2 class="text-3xl md:text-4xl font-bold text-amber-800 mb-2">Alex Rogers</h2>
+                   <p class="text-xl font-medium text-amber-600 mb-8">President, Qualcomm Technology Licensing (QTL)</p>
+                   <div class="space-y-8 text-lg text-slate-700 leading-relaxed">
+                       <p>Alex Rogers è il custode del tesoro di Qualcomm: il suo immenso portafoglio di brevetti. Dirige la divisione QTL, che per anni è stata la principale macchina da profitti dell'azienda. Con un background legale e oltre 20 anni in Qualcomm, è un negoziatore esperto e uno stratega della proprietà intellettuale.</p>
+                       <div class="p-6 bg-slate-50 rounded-lg">
+                           <h4 class="font-bold text-slate-800 mb-2">Successi e Gestione delle Crisi:</h4>
+                           <p>Rogers ha guidato con successo il QTL attraverso innumerevoli sfide legali e normative in tutto il mondo (Cina, Corea del Sud, Europa, USA). Il suo capolavoro è stato la risoluzione della lunga e costosa disputa con Apple nel 2019, che non solo ha portato a un accordo miliardario ma ha anche riaffermato la validità del modello di licenza di Qualcomm, un successo vitale per l'azienda.</p>
+                       </div>
+                       <div>
+                           <h4 class="font-bold text-slate-800 mb-2">Affrontare i Fallimenti:</h4>
+                           <p>Le indagini antitrust hanno rappresentato i "fallimenti" più visibili per QTL, con multe significative. Rogers ha trasformato queste sconfitte tattiche in opportunità strategiche. Invece di una battaglia senza fine, ha adottato un approccio pragmatico, rinegoziando accordi per conformarsi alle sentenze ma senza smantellare il valore fondamentale del portafoglio brevetti. Ha imparato a bilanciare la fermezza legale con la flessibilità commerciale per preservare i flussi di ricavi a lungo termine.</p>
+                       </div>
+                   </div>
+               </div>
+           </main>
+        </div>
+        <div id="leader-thompson" class="page-view">
+            <main class="container mx-auto px-6 py-8 md:py-12">
+                <button class="back-to-main mb-8 inline-flex items-center text-sky-600 hover:text-sky-800 font-semibold transition-colors">
+                   <i data-lucide="arrow-left" class="w-5 h-5 mr-2"></i>Torna alla Panoramica
+               </button>
+               <div class="bg-white p-8 rounded-lg shadow-xl">
+                   <h2 class="text-3xl md:text-4xl font-bold text-rose-800 mb-2">Jim Thompson</h2>
+                   <p class="text-xl font-medium text-rose-600 mb-8">Chief Technology Officer (CTO)</p>
+                   <div class="space-y-8 text-lg text-slate-700 leading-relaxed">
+                       <p>Jim Thompson è la mente tecnologica che traccia la rotta futura di Qualcomm. Con quasi 30 anni di carriera in azienda, ha guidato lo sviluppo di tecnologie fondamentali che hanno definito le generazioni mobili, dal 3G al 5G. Come CTO, il suo ruolo è guardare oltre l'orizzonte e scommettere sulle innovazioni che alimenteranno la crescita futura.</p>
+                       <div class="p-6 bg-slate-50 rounded-lg">
+                           <h4 class="font-bold text-slate-800 mb-2">Successi e Gestione delle Crisi:</h4>
+                           <p>Il suo più grande successo è stato posizionare Qualcomm come leader indiscusso nel 5G, un'impresa complessa che ha richiesto anni di ricerca e sviluppo. Ha anche guidato l'integrazione dell'AI nell'architettura dei processori Snapdragon, un'intuizione che si sta rivelando vincente con l'esplosione dell'AI on-device. Durante i periodi di intensa concorrenza, ha saputo mantenere il team di R&D focalizzato sull'innovazione a lungo termine, evitando reazioni a breve termine.</p>
+                       </div>
+                       <div>
+                           <h4 class="font-bold text-slate-800 mb-2">Affrontare i Fallimenti:</h4>
+                           <p>Un "fallimento" tecnologico per Qualcomm è stato il ritardo iniziale nel mercato dei processori per server, dove non è riuscita a scalfire il dominio di Intel e AMD. Thompson e il suo team hanno imparato da questa esperienza. Invece di un attacco frontale, la nuova strategia (incarnata dall'acquisizione di Nuvia e dai core Oryon) è più mirata: non più server generici, ma chip ad alte prestazioni e basso consumo per il mercato PC e, in futuro, per carichi di lavoro specifici nell'edge-cloud. È un esempio di come un fallimento abbia portato a una strategia più intelligente e focalizzata.</p>
+                       </div>
+                   </div>
+               </div>
+           </main>
+        </div>
+        <div id="leader-mcguire" class="page-view">
+           <main class="container mx-auto px-6 py-8 md:py-12">
+                <button class="back-to-main mb-8 inline-flex items-center text-sky-600 hover:text-sky-800 font-semibold transition-colors">
+                   <i data-lucide="arrow-left" class="w-5 h-5 mr-2"></i>Torna alla Panoramica
+               </button>
+               <div class="bg-white p-8 rounded-lg shadow-xl">
+                   <h2 class="text-3xl md:text-4xl font-bold text-teal-800 mb-2">Don McGuire</h2>
+                   <p class="text-xl font-medium text-teal-600 mb-8">Chief Marketing Officer (CMO)</p>
+                   <div class="space-y-8 text-lg text-slate-700 leading-relaxed">
+                       <p>Don McGuire ha il compito di tradurre l'incredibile complessità tecnologica di Qualcomm in un messaggio chiaro e potente. Entrato in azienda nel 2016, è diventato CMO nel 2021 con la missione di evolvere il brand da un gigante B2B (business-to-business) a un marchio riconosciuto e desiderato anche dai consumatori finali.</p>
+                       <div class="p-6 bg-slate-50 rounded-lg">
+                           <h4 class="font-bold text-slate-800 mb-2">Successi e Gestione delle Crisi:</h4>
+                           <p>Il suo maggior successo è stata la campagna "Snapdragon Insiders", una community di fan che ha dato un volto umano al brand. Ha anche orchestrato il rebranding di Snapdragon come marchio di prodotto premium, non solo un componente. Durante la transizione verso Automotive e IoT, sta creando una narrativa coerente che posiziona Qualcomm come l'abilitatore della trasformazione digitale in ogni settore, non solo nella telefonia.</p>
+                       </div>
+                       <div>
+                           <h4 class="font-bold text-slate-800 mb-2">Affrontare i Fallimenti:</h4>
+                           <p>Storicamente, il "fallimento" del marketing di Qualcomm è stata la sua invisibilità al grande pubblico. Nonostante i suoi chip fossero nel cuore di miliardi di dispositivi, pochi consumatori conoscevano il marchio. McGuire ha affrontato questo problema frontalmente. Invece di ignorarlo, ha basato la sua strategia sul renderlo un punto di forza: "il cervello dietro le tue esperienze preferite". Ha imparato che per un'azienda di componenti, il marketing di successo non è imitare i marchi di consumo, ma costruire partnership forti (co-branding) e creare una reputazione di eccellenza tecnologica che influenza indirettamente le scelte dei consumatori.</p>
+                       </div>
+                   </div>
+               </div>
+           </main>
+        </div>
+        <div id="mobile-detail" class="page-view">
+             <!-- Contenuto dettaglio Mobile -->
+        </div>
+        <div id="automotive-detail" class="page-view">
+            <!-- Contenuto dettaglio Automotive -->
+        </div>
+        <div id="iot-detail" class="page-view">
+             <!-- Contenuto dettaglio IoT -->
+        </div>
+    </div>
+    
+    <footer class="bg-slate-800 text-slate-400">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p>&copy; 2024 Analisi Finanziaria. Tutti i diritti riservati.</p>
+            <p class="text-sm mt-2">Questa analisi è a solo scopo informativo e non costituisce una sollecitazione all'investimento.</p>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const financialData = {
+                labels: ['2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'],
+                datasets: {
+                    revenue: { label: 'Ricavi ($B)', data: [5.67, 5.03, 8.87, 11.14, 10.42, 10.99, 14.96, 19.12, 24.87, 26.49, 25.28, 23.55, 22.29, 22.61, 24.27, 23.53, 33.57, 44.20, 35.82, 38.96], color: '#0ea5e9', yAxisID: 'yDollars' },
+                    netIncome: { label: 'Utile Netto ($B)', data: [2.14, 1.59, 3.30, 3.16, 1.59, 3.25, 4.26, 6.11, 6.85, 7.97, 5.27, 5.71, 0.72, -4.96, 4.39, 5.20, 9.04, 12.94, 7.23, 10.14], color: '#10b981', yAxisID: 'yDollars' },
+                    roe: { label: 'ROE (%)', data: [19.8, 14.6, 26.6, 22.9, 10.7, 15.6, 15.8, 18.2, 19.0, 20.3, 16.8, 18.0, 2.3, -614.6, 89.4, 85.5, 90.9, 71.8, 33.5, 38.6], color: '#8b5cf6', yAxisID: 'yPercent' },
+                    pe: { label: 'P/E (Ratio)', data: [17.5, 23.2, 13.9, 11.2, 29.5, 14.7, 12.8, 10.3, 10.8, 9.4, 12.5, 12.0, 77.5, null, 18.6, 28.1, 19.5, 9.8, 16.7, 13.5], color: '#f97316', yAxisID: 'yRatio' },
+                    pb: { label: 'P/B (Ratio)', data: [3.4, 3.2, 3.5, 2.5, 3.1, 2.3, 2.0, 1.8, 2.0, 1.9, 2.1, 2.1, 1.8, 11.4, 16.6, 24.0, 17.7, 7.0, 5.6, 5.2], color: '#ec4899', yAxisID: 'yRatio' },
+                    de: { label: 'D/E (Ratio)', data: [0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.28, 0.26, 0.24, 0.62, 0.65, 1.13, 39.54, 5.71, 4.86, 3.15, 1.72, 1.37, 1.10], color: '#6366f1', yAxisID: 'yRatio' },
+                }
+            };
+            
+            const analysisText = {
+                 revenue: `<h4>Analisi dei Ricavi (Fatturato)</h4><p>I ricavi mostrano una crescita impressionante legata ai cicli di innovazione mobile (3G, 4G, 5G). Si notano picchi di crescita durante le transizioni tecnologiche chiave e periodi di plateau o calo dovuti alla maturazione del mercato smartphone e a dispute commerciali (es. con Apple). La recente ripresa è spinta dalla diversificazione in Automotive e IoT.</p>`,
+                netIncome: `<h4>Analisi dell'Utile Netto</h4><p>L'andamento dell'utile netto segue quello dei ricavi ma con maggiore volatilità. I cali drastici, come nel 2018, sono spesso legati a eventi straordinari (multe antitrust, accordi legali). L'utile è un ottimo indicatore della salute operativa al netto di costi e tasse, e la sua crescita recente dimostra una solida redditività.</p>`,
+                roe: `<h4>Analisi del ROE (Return on Equity)</h4><p>Il ROE indica l'efficienza con cui l'azienda genera profitti dal capitale degli azionisti. Storicamente, Qualcomm ha mantenuto un ROE eccellente, segno di un business di alta qualità. I crolli (2017-2018) sono legati a eventi che hanno eroso il patrimonio netto o gli utili (multe, riacquisti di azioni). Un ROE costantemente elevato è un segnale molto positivo per un value investor.</p>`,
+                pe: `<h4>Analisi del P/E (Price-to-Earnings)</h4><p>Il P/E mostra quante volte il mercato valuta gli utili. I valori di Qualcomm hanno fluttuato, con P/E più bassi nei periodi di incertezza e più alti quando le prospettive di crescita erano forti. Un P/E basso può indicare sottovalutazione, ma va sempre contestualizzato: il P/E nullo nel 2018 è dovuto a una perdita netta, non a un'azione "gratuita".</p>`,
+                pb: `<h4>Analisi del P/B (Price-to-Book)</h4><p>Confronta il prezzo di mercato con il patrimonio netto. Un P/B basso può suggerire sottovalutazione. Il picco anomalo del 2018-2020 è dovuto a un drastico calo del patrimonio netto a causa di massicci riacquisti di azioni, che ha fatto "esplodere" il rapporto. Negli ultimi anni si è normalizzato a livelli che riflettono un'azienda premium.</p>`,
+                de: `<h4>Analisi del D/E (Debt-to-Equity)</h4><p>Misura l'indebitamento rispetto al capitale proprio. Per molti anni, Qualcomm ha avuto un debito quasi nullo. L'aumento significativo dal 2015 in poi riflette un cambio di strategia finanziaria, con l'uso della leva per finanziare acquisizioni e riacquisti di azioni. Il recente calo del D/E indica un ritorno verso una struttura finanziaria più conservativa.</p>`,
+            };
+
+            const ctx = document.getElementById('financialChart')?.getContext('2d');
+            let chart;
+            let activeMetrics = ['revenue'];
+
+            function updateChartAndAnalysis() {
+                 if(!chart) return;
+                const datasets = activeMetrics.map(metric => {
+                    const datasetConfig = financialData.datasets[metric];
+                    return {
+                        label: datasetConfig.label,
+                        data: datasetConfig.data,
+                        borderColor: datasetConfig.color,
+                        backgroundColor: `${datasetConfig.color}33`, // Aggiunta trasparenza per l'area
+                        fill: true, // Attivata la visualizzazione dell'area
+                        yAxisID: datasetConfig.yAxisID,
+                        tension: 0.2,
+                        borderWidth: 2,
+                        pointRadius: 2,
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: datasetConfig.color,
+                    };
+                });
+                
+                chart.data.datasets = datasets;
+                const activeAxes = new Set(datasets.map(d => d.yAxisID));
+                
+                Object.keys(chart.options.scales).forEach(axisId => {
+                    if (axisId.startsWith('y')) {
+                        chart.options.scales[axisId].display = activeAxes.has(axisId);
+                    }
+                });
+
+                if(activeMetrics.length === 0){
+                     Object.keys(chart.options.scales).forEach(axisId => {
+                        if (axisId.startsWith('y')) chart.options.scales[axisId].display = false;
+                    });
+                }
+                chart.update();
+                updateAnalysisText(activeMetrics);
+            }
+            
+            function updateAnalysisText(metrics) {
+                const analysisContainer = document.getElementById('chart-analysis');
+                if (!analysisContainer) return;
+                if (metrics.length === 0) {
+                    analysisContainer.innerHTML = '<h4>Seleziona un indicatore per iniziare l\'analisi.</h4><p>Puoi selezionare più indicatori contemporaneamente per confrontare i loro andamenti nel tempo.</p>';
+                    analysisContainer.style.opacity = '1';
+                } else {
+                    const lastMetric = metrics[metrics.length - 1];
+                    analysisContainer.style.opacity = '0';
+                    setTimeout(() => {
+                        analysisContainer.innerHTML = analysisText[lastMetric] || '';
+                        analysisContainer.style.opacity = '1';
+                    }, 300);
+                }
+            }
+
+            function initializeChart() {
+                if(!ctx) return;
+                chart = new Chart(ctx, {
+                    type: 'line',
+                    data: { labels: financialData.labels, datasets: [] },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            x: { ticks: { color: '#475569' }, grid: { display: false } },
+                            yDollars: { type: 'linear', position: 'left', display: false, grid: { color: '#e2e8f0' }, ticks: { color: '#0ea5e9', callback: value => value + 'B' }, title: { display: true, text: 'Miliardi ($)', color: '#0ea5e9' } },
+                            yPercent: { type: 'linear', position: 'right', display: false, grid: { drawOnChartArea: false }, ticks: { color: '#8b5cf6', callback: value => value + '%' }, title: { display: true, text: 'Percentuale (%)', color: '#8b5cf6' } },
+                            yRatio: { type: 'linear', position: 'right', display: false, grid: { drawOnChartArea: false }, ticks: { color: '#f97316' }, title: { display: true, text: 'Ratio (x)', color: '#f97316' } }
+                        },
+                        plugins: {
+                            legend: { display: true, position: 'top', labels: { color: '#334155', usePointStyle: true, boxWidth: 8 } },
+                            tooltip: {
+                                backgroundColor: '#fff',
+                                titleColor: '#1e293b',
+                                bodyColor: '#475569',
+                                borderColor: '#e2e8f0',
+                                borderWidth: 1,
+                                padding: 10,
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) { label += ': '; }
+                                        if (context.parsed.y !== null) {
+                                           label += context.parsed.y.toFixed(2);
+                                           if (context.dataset.yAxisID === 'yDollars') label += 'B';
+                                           if (context.dataset.yAxisID === 'yPercent') label += '%';
+                                        } else {
+                                           label += 'N/A';
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+             
+            // Gestione Navigazione Pagine
+            function showPage(pageId) {
+                document.querySelectorAll('.page-view').forEach(page => page.classList.remove('active'));
+                const targetPage = document.getElementById(pageId);
+                if(targetPage) {
+                    targetPage.classList.add('active');
+                    window.scrollTo(0, 0);
+                } else {
+                    document.getElementById('main-content').classList.add('active');
+                }
+            }
+
+            document.querySelectorAll('.nav-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.dataset.target;
+                    showPage(targetId);
+                });
+            });
+
+            document.querySelectorAll('.back-to-main').forEach(button => {
+                button.addEventListener('click', () => showPage('main-content'));
+            });
+            
+            document.querySelectorAll('.main-nav-link').forEach(link => {
+                link.addEventListener('click', (event) => {
+                    if(!document.getElementById('main-content').classList.contains('active')) {
+                        event.preventDefault();
+                        showPage('main-content');
+                        setTimeout(() => {
+                           const targetId = link.getAttribute('href');
+                           document.querySelector(targetId)?.scrollIntoView({ behavior: 'smooth' });
+                        }, 100);
+                    }
+                });
+            });
+
+            // Inizializzazione
+            initializeChart();
+            const metricButtons = document.querySelectorAll('.metric-button');
+            metricButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const metric = button.dataset.metric;
+                    button.classList.toggle('active');
+                    if (activeMetrics.includes(metric)) {
+                        activeMetrics = activeMetrics.filter(m => m !== metric);
+                    } else {
+                        activeMetrics.push(metric);
+                    }
+                    updateChartAndAnalysis();
+                });
+            });
+            
+            const initialMetricButton = document.querySelector('.metric-button[data-metric="revenue"]');
+            if (initialMetricButton) {
+                initialMetricButton.classList.add('active');
+            }
+            updateChartAndAnalysis();
+        });
+    </script>
+</body>
+</html>
