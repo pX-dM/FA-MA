@@ -10,8 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Warm Neutrals & Subtle Green -->
-    <!-- Application Structure Plan: La struttura è tematica e narrativa, progettata per guidare l'utente dalla visione generale della "Rivoluzione AI" di NVIDIA ai dettagli specifici. Inizia con il "perché" (la rivoluzione AI), passa al "come" (il vantaggio competitivo e la leadership), mostra le "prove" (l'analisi finanziaria e competitiva), valuta il "futuro" (SWOT e rischi) e si conclude con la sintesi (tesi finale). Questa struttura non lineare è più coinvolgente di un semplice report, permettendo agli utenti di cogliere prima il quadro generale e poi approfondire le aree di interesse. Le interazioni (grafici, selettori, card) sono pensate per semplificare dati complessi e rendere l'esplorazione intuitiva. -->
-    <!-- Visualization & Content Choices: 1. Crescita Finanziaria -> Goal: Mostrare correlazioni tra crescita (Ricavi), profitto (Utile Netto), redditività (ROE), valutazione (P/E, P/B) e rischio (D/E). -> Viz: Grafico a linee interattivo con doppio asse Y (Chart.js/Canvas). Interazione: Pulsanti multi-selezione. Giustificazione: Il doppio asse è essenziale per confrontare metriche con scale diverse (miliardi vs rapporti/percentuali), fornendo un'analisi più ricca. 2. Vantaggio Competitivo -> Goal: Organizzare -> Viz: Layout a tre colonne (HTML/Tailwind). 3. Confronto Competitivo -> Goal: Confrontare -> Viz: Tabella HTML. 4. Analisi SWOT -> Goal: Organizzare -> Viz: Griglia 2x2 (HTML/Tailwind). -->
+    <!-- Application Structure Plan: La struttura è tematica e narrativa, progettata per guidare l'utente dalla visione generale ai dettagli specifici. L'aggiunta di finestre modali per gli approfondimenti storici e i profili del management permette di mantenere la pagina principale pulita e scorrevole, offrendo contenuti dettagliati "on-demand". Questo migliora l'usabilità, consentendo all'utente di scegliere il proprio livello di profondità nell'esplorazione senza essere sopraffatto dalle informazioni. La navigazione rimane tematica: Visione -> Finanza -> Vantaggio -> Leadership -> Concorrenza -> Rischi -> Tesi. -->
+    <!-- Visualization & Content Choices: 1. Approfondimenti Storici & Management -> Goal: Offrire contenuti dettagliati senza appesantire la pagina -> Viz: Finestre modali (HTML/CSS/JS) attivate da link "Scopri di più". Giustificazione: L'uso di modali mantiene il focus dell'utente e preserva il flusso narrativo della pagina principale. 2. Crescita Finanziaria -> Goal: Mostrare correlazioni -> Viz: Grafico a linee con doppio asse Y (Chart.js/Canvas). 3. Vantaggio Competitivo -> Goal: Organizzare -> Viz: Layout a tre colonne. 4. Analisi SWOT -> Goal: Organizzare -> Viz: Griglia 2x2. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
@@ -80,6 +80,13 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        .modal {
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -99,7 +106,7 @@
                         <a href="#rivoluzione-ai" class="nav-link text-stone-600 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium">La Rivoluzione AI</a>
                         <a href="#analisi-finanziaria" class="nav-link text-stone-600 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium">Finanza</a>
                         <a href="#vantaggio-competitivo" class="nav-link text-stone-600 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium">Vantaggio</a>
-                        <a href="#leadership" class="nav-link text-stone-600 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium">Leadership</a>
+                         <a href="#management" class="nav-link text-stone-600 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium">Leadership</a>
                         <a href="#analisi-competitiva" class="nav-link text-stone-600 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium">Concorrenza</a>
                         <a href="#swot-rischi" class="nav-link text-stone-600 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium">SWOT & Rischi</a>
                         <a href="#tesi-finale" class="nav-link text-stone-600 hover:text-green-500 px-3 py-2 rounded-md text-sm font-medium">Tesi Finale</a>
@@ -123,7 +130,7 @@
                 <a href="#rivoluzione-ai" class="nav-link text-stone-600 hover:text-green-500 block px-3 py-2 rounded-md text-base font-medium">La Rivoluzione AI</a>
                 <a href="#analisi-finanziaria" class="nav-link text-stone-600 hover:text-green-500 block px-3 py-2 rounded-md text-base font-medium">Finanza</a>
                 <a href="#vantaggio-competitivo" class="nav-link text-stone-600 hover:text-green-500 block px-3 py-2 rounded-md text-base font-medium">Vantaggio</a>
-                <a href="#leadership" class="nav-link text-stone-600 hover:text-green-500 block px-3 py-2 rounded-md text-base font-medium">Leadership</a>
+                <a href="#management" class="nav-link text-stone-600 hover:text-green-500 block px-3 py-2 rounded-md text-base font-medium">Leadership</a>
                 <a href="#analisi-competitiva" class="nav-link text-stone-600 hover:text-green-500 block px-3 py-2 rounded-md text-base font-medium">Concorrenza</a>
                 <a href="#swot-rischi" class="nav-link text-stone-600 hover:text-green-500 block px-3 py-2 rounded-md text-base font-medium">SWOT & Rischi</a>
                 <a href="#tesi-finale" class="nav-link text-stone-600 hover:text-green-500 block px-3 py-2 rounded-md text-base font-medium">Tesi Finale</a>
@@ -160,21 +167,24 @@
                         Questa sezione esplora la visione strategica che ha trasformato NVIDIA. Non si tratta di una semplice evoluzione, ma di una serie di scommesse audaci che hanno anticipato e creato il mercato del calcolo accelerato, posizionando l'azienda al centro della più grande transizione tecnologica della nostra era.
                     </p>
                 </div>
-                <div class="grid md:grid-cols-3 gap-8 text-center">
-                    <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300">
-                        <div class="text-4xl text-green-500 mb-4">❶</div>
-                        <h3 class="text-xl font-semibold mb-2 text-stone-800">La Nascita del GPU (1999)</h3>
-                        <p class="text-stone-600">Con la GeForce 256, NVIDIA non migliora semplicemente la grafica, ma inventa una nuova categoria di processori. La sua architettura massicciamente parallela, nata per i videogiochi, si rivelerà la chiave per il futuro del supercalcolo.</p>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col">
+                        <div class="text-4xl text-green-500 mb-4 text-center">❶</div>
+                        <h3 class="text-xl font-semibold mb-2 text-stone-800 text-center">La Nascita del GPU (1999)</h3>
+                        <p class="text-stone-600 flex-grow">Con la GeForce 256, NVIDIA non migliora semplicemente la grafica, ma inventa una nuova categoria di processori. La sua architettura massicciamente parallela, nata per i videogiochi, si rivelerà la chiave per il futuro del supercalcolo.</p>
+                        <button data-modal-target="modal-gpu" class="mt-4 text-green-600 font-semibold hover:text-green-800 self-center">Scopri di più &rarr;</button>
                     </div>
-                    <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300">
-                        <div class="text-4xl text-green-500 mb-4">❷</div>
-                        <h3 class="text-xl font-semibold mb-2 text-stone-800">L'Intuizione di CUDA (2006)</h3>
-                        <p class="text-stone-600">Una mossa visionaria: aprire i GPU al calcolo generico. CUDA trasforma un processore grafico in un supercomputer accessibile, gettando le fondamenta software per la rivoluzione dell'IA, anni prima della sua esplosione.</p>
+                    <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col">
+                        <div class="text-4xl text-green-500 mb-4 text-center">❷</div>
+                        <h3 class="text-xl font-semibold mb-2 text-stone-800 text-center">L'Intuizione di CUDA (2006)</h3>
+                        <p class="text-stone-600 flex-grow">Una mossa visionaria: aprire i GPU al calcolo generico. CUDA trasforma un processore grafico in un supercomputer accessibile, gettando le fondamenta software per la rivoluzione dell'IA, anni prima della sua esplosione.</p>
+                        <button data-modal-target="modal-cuda" class="mt-4 text-green-600 font-semibold hover:text-green-800 self-center">Scopri di più &rarr;</button>
                     </div>
-                    <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300">
-                        <div class="text-4xl text-green-500 mb-4">❸</div>
-                        <h3 class="text-xl font-semibold mb-2 text-stone-800">Il "Big Bang" dell'IA (2012-Oggi)</h3>
-                        <p class="text-stone-600">La vittoria di AlexNet su GPU NVIDIA dimostra al mondo la superiorità del calcolo accelerato per il deep learning. Da quel momento, NVIDIA diventa l'infrastruttura indispensabile su cui si costruisce l'economia globale dell'IA.</p>
+                    <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col">
+                        <div class="text-4xl text-green-500 mb-4 text-center">❸</div>
+                        <h3 class="text-xl font-semibold mb-2 text-stone-800 text-center">Il "Big Bang" dell'IA (2012-Oggi)</h3>
+                        <p class="text-stone-600 flex-grow">La vittoria di AlexNet su GPU NVIDIA dimostra al mondo la superiorità del calcolo accelerato per il deep learning. Da quel momento, NVIDIA diventa l'infrastruttura indispensabile su cui si costruisce l'economia globale dell'IA.</p>
+                        <button data-modal-target="modal-ai" class="mt-4 text-green-600 font-semibold hover:text-green-800 self-center">Scopri di più &rarr;</button>
                     </div>
                 </div>
             </section>
@@ -243,45 +253,15 @@
                 </div>
             </section>
             
-            <!-- Leadership -->
-            <section id="leadership" class="content-section">
-                 <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-stone-800">La Visione di Jensen Huang</h2>
-                    <p class="mt-4 max-w-3xl mx-auto text-lg text-stone-600">
-                        Un'azienda è spesso il riflesso del suo leader. Nel caso di NVIDIA, la leadership di Jensen Huang è un asset strategico intangibile. Questa sezione analizza come il suo stile non convenzionale, la sua visione a lungo termine e la sua cultura aziendale siano diventati un "fossato organizzativo" tanto importante quanto quello tecnologico.
-                    </p>
+             <!-- Management Section -->
+            <section id="management" class="content-section">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-stone-800">Leadership e Visione</h2>
+                    <p class="mt-4 max-w-3xl mx-auto text-lg text-stone-600">Il successo di NVIDIA è guidato da un team di leadership con una profonda esperienza tecnologica e una visione strategica a lungo termine. Scopri i profili dei dirigenti chiave che, sotto la guida del fondatore Jensen Huang, stanno plasmando il futuro del calcolo accelerato e dell'IA.</p>
                 </div>
-                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-                    <div class="p-8">
-                        <div class="grid md:grid-cols-2 gap-8 items-center">
-                            <div>
-                                <h3 class="text-3xl font-bold text-stone-800">Jensen Huang</h3>
-                                <p class="text-xl font-medium text-green-600 mt-1">Co-fondatore & CEO</p>
-                                <p class="mt-4 text-stone-600">
-                                    Lo stile di leadership di Huang è un pilastro del successo di NVIDIA. Rifiutando le gerarchie tradizionali a favore della trasparenza radicale e dell'agilità decisionale, ha forgiato una cultura di innovazione resiliente e veloce, in grado di navigare e definire un settore in continua evoluzione.
-                                </p>
-                            </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div class="bg-stone-100 p-4 rounded-lg">
-                                    <h4 class="font-bold text-stone-700">Visione a Lungo Termine</h4>
-                                    <p class="text-sm text-stone-600">Scommesse strategiche come CUDA dimostrano la sua capacità di creare mercati futuri, non solo di servirli.</p>
-                                </div>
-                                 <div class="bg-stone-100 p-4 rounded-lg">
-                                    <h4 class="font-bold text-stone-700">Agilità Organizzativa</h4>
-                                    <p class="text-sm text-stone-600">Una struttura piatta con decine di riporti diretti accelera il flusso di informazioni e le decisioni.</p>
-                                </div>
-                                 <div class="bg-stone-100 p-4 rounded-lg">
-                                    <h4 class="font-bold text-stone-700">Cultura della Trasparenza</h4>
-                                    <p class="text-sm text-stone-600">Promuove l'onestà intellettuale e la condivisione degli errori come opportunità di apprendimento.</p>
-                                </div>
-                                <div class="bg-stone-100 p-4 rounded-lg">
-                                    <h4 class="font-bold text-stone-700">Competenza Tecnica</h4>
-                                    <p class="text-sm text-stone-600">Una profonda comprensione tecnica gli permette di guidare l'innovazione dal fronte.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                 </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="management-grid">
+                    <!-- Management cards will be injected here by JavaScript -->
+                </div>
             </section>
             
             <!-- Analisi Competitiva -->
@@ -370,9 +350,9 @@
                         <h2 class="text-3xl md:text-4xl font-bold text-stone-800">Tesi Finale dell'Investimento</h2>
                     </div>
                     <div class="mt-8 text-lg text-stone-700 space-y-4 max-w-4xl mx-auto">
-                        <p>NVIDIA ha trasceso il suo ruolo di produttore di hardware per diventare l'architetto e il fornitore di infrastrutture indispensabile per l'era dell'intelligenza artificiale. La valutazione attuale, sebbene elevata, riflette il suo ruolo quasi monopolistico in un mercato secolare in crescita esponenziale, la sua eccezionale redditività e un vantaggio competitivo profondo radicato nell'ecosistema software CUDA.</p>
-                        <p class="font-semibold text-stone-800">Un investimento in NVIDIA oggi è una scommessa diretta sulla continuazione e l'accelerazione della rivoluzione dell'IA e sulla sua capacità di mantenere la leadership tecnologica.</p>
-                        <p>I rischi sono significativi e legati a una valutazione che non lascia margine d'errore e a complesse dinamiche geopolitiche. Tuttavia, per un investitore con un orizzonte a lungo termine e un'adeguata tolleranza al rischio, NVIDIA rappresenta un'esposizione unica e potenzialmente irripetibile al più importante megatrend tecnologico di questa generazione.</p>
+                        <p>NVIDIA ha trasceso il suo ruolo di produttore di hardware per diventare l'architetto e il fornitore di infrastrutture indispensabile per l'era dell'intelligenza artificiale. Il suo vantaggio competitivo non risiede solo nel silicio, ma nella profonda e inestricabile sinergia tra hardware all'avanguardia, un ecosistema software (CUDA) che ha creato standard di settore de facto, e una rete di partnership che pervade l'intera industria tecnologica. Questo fossato integrato appare, al momento, solido e straordinariamente difficile da replicare per i concorrenti nel breve e medio termine.</p>
+                        <p class="font-semibold text-stone-800">Un investimento in NVIDIA oggi è una scommessa diretta sulla continuazione e l'accelerazione della rivoluzione dell'IA e sulla capacità dell'azienda di mantenere la sua schiacciante leadership tecnologica.</p>
+                        <p>I rischi, come analizzato, sono significativi e sono principalmente legati a una valutazione che sconta già un futuro molto roseo e non lascia spazio a delusioni, oltre che a complesse e imprevedibili dinamiche geopolitiche.</p>
                     </div>
                 </div>
             </section>
@@ -386,6 +366,70 @@
             <p class="text-sm text-stone-400 mt-2">Dati finanziari basati su documenti pubblici (SEC filings). I multipli di valutazione sono stime e possono variare.</p>
         </div>
     </footer>
+
+    <!-- Modal Structure -->
+    <div id="app-modal" class="modal fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden opacity-0">
+        <div class="modal-content bg-white w-full max-w-4xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col transform scale-95">
+            <div class="flex items-center justify-between p-4 border-b">
+                <h3 id="modal-title" class="text-2xl font-bold text-stone-800"></h3>
+                <button id="modal-close" class="text-stone-500 hover:text-red-500 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div id="modal-body" class="p-6 md:p-8 overflow-y-auto">
+                <!-- Modal content will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Modal Content -->
+    <div class="hidden">
+        <div id="modal-content-gpu">
+            <h4 class="text-xl font-bold text-stone-800 mb-4">La Nascita del GPU (1999): Una Nuova Categoria di Calcolo</h4>
+            <p class="text-stone-600 mb-4">Prima del 1999, la grafica 3D era un lusso computazionale. Le CPU (Central Processing Units) dei computer erano sovraccaricate dal compito di eseguire sia la logica del programma che i complessi calcoli geometrici e di illuminazione necessari per creare mondi tridimensionali. Il risultato erano prestazioni lente e una qualità visiva limitata.</p>
+            <p class="text-stone-600 mb-4">Con l'introduzione della **GeForce 256**, NVIDIA non si è limitata a creare una scheda grafica più veloce. Ha definito una nuova categoria di processori: la **GPU (Graphics Processing Unit)**. La sua innovazione chiave è stata l'integrazione di un motore di **Transform and Lighting (T&L)** direttamente sul chip. Questo ha permesso di scaricare le operazioni di trasformazione geometrica (muovere e ruotare oggetti nello spazio 3D) e di illuminazione (calcolare come la luce interagisce con le superfici) dalla CPU alla GPU.</p>
+            <p class="text-stone-600">L'impatto fu immediato e profondo. Liberando la CPU, i giochi potevano avere mondi più complessi, personaggi più dettagliati e frame rate più fluidi. Ma la vera rivoluzione era architettonica: la GPU, con le sue centinaia di core progettati per eseguire calcoli paralleli, era intrinsecamente più adatta a gestire i carichi di lavoro grafici. Questa scommessa su un'architettura massicciamente parallela, nata per il gaming, ha posto le basi involontarie per il futuro del supercalcolo e dell'intelligenza artificiale.</p>
+        </div>
+
+        <div id="modal-content-cuda">
+            <h4 class="text-xl font-bold text-stone-800 mb-4">CUDA (2006): La Mossa Geniale che ha Democratizzato il Supercalcolo</h4>
+            <p class="text-stone-600 mb-4">Nel 2006, NVIDIA era il re indiscusso del mercato del gaming. Avrebbe potuto continuare a concentrarsi esclusivamente su quel mercato. Invece, fece una delle scommesse più visionarie nella storia della tecnologia: il lancio di **CUDA (Compute Unified Device Architecture)**.</p>
+            <p class="text-stone-600 mb-4">CUDA è una piattaforma di calcolo parallelo e un'interfaccia di programmazione (API) che ha aperto per la prima volta la straordinaria potenza di calcolo dei GPU a scopi non grafici (un concetto noto come **GPGPU - General-Purpose computing on GPUs**). Prima di CUDA, programmare una GPU per compiti scientifici o di calcolo era un'impresa ardua, riservata a pochi specialisti con conoscenze esoteriche di programmazione grafica.</p>
+            <p class="text-stone-600 mb-4">Con CUDA, gli sviluppatori potevano improvvisamente programmare i GPU utilizzando linguaggi familiari come il **C, C++ e Fortran**. Questo ha trasformato ogni GPU NVIDIA in un supercomputer parallelo accessibile e a basso costo. Scienziati, ingegneri e ricercatori potevano ora accelerare le loro simulazioni e i loro calcoli di ordini di grandezza. Fu una mossa strategica a lungo termine: NVIDIA iniziò a costruire un "fossato" software attorno al suo hardware, coltivando una comunità di sviluppatori che avrebbe legato indissolubilmente il futuro del calcolo ad alte prestazioni all'ecosistema NVIDIA.</p>
+        </div>
+        
+        <div id="modal-content-ai">
+            <h4 class="text-xl font-bold text-stone-800 mb-4">Il "Big Bang" dell'IA (2012): AlexNet e il Trionfo del Deep Learning su GPU</h4>
+            <p class="text-stone-600 mb-4">Il valore della scommessa su CUDA divenne palese a tutto il mondo nel 2012. Quell'anno, una rete neurale profonda chiamata **AlexNet**, sviluppata dall'Università di Toronto da Alex Krizhevsky, Ilya Sutskever e Geoffrey Hinton, partecipò alla prestigiosa competizione di riconoscimento di immagini **ImageNet Large Scale Visual Recognition Challenge (ILSVRC)**.</p>
+            <p class="text-stone-600 mb-4">Addestrata su due GPU NVIDIA GeForce GTX 580, AlexNet ottenne un tasso di errore del 15,3%, più di 10 punti percentuali in meno rispetto al secondo classificato. Fu una vittoria schiacciante che scioccò la comunità della computer vision e segnò l'inizio dell'era moderna del deep learning. Per la prima volta, un approccio basato sulle reti neurali aveva dimostrato una superiorità inequivocabile rispetto ai metodi tradizionali.</p>
+            <p class="text-stone-600">Il segreto del successo di AlexNet era la capacità delle GPU NVIDIA di addestrare un modello così grande e complesso in un tempo ragionevole, grazie alla loro architettura parallela e all'ecosistema CUDA. Questo evento funse da catalizzatore. Improvvisamente, l'intera comunità di ricerca sull'IA si rese conto che i GPU NVIDIA non erano solo un'opzione, ma lo strumento essenziale per far progredire il deep learning. Da quel momento, NVIDIA ha cavalcato l'onda, posizionandosi come il fornitore hardware indispensabile per la rivoluzione dell'intelligenza artificiale e consolidando il suo dominio tecnologico.</p>
+        </div>
+        
+        <div id="modal-content-jensen-huang">
+            <h4 class="text-xl font-bold text-stone-800 mb-4">Jensen Huang: Il Leader Visionario</h4>
+            <p class="text-stone-600 mb-4">Come co-fondatore e CEO fin dal primo giorno, Jensen Huang è sinonimo di NVIDIA. La sua leadership tecnica e la sua visione a lungo termine sono considerate i principali motori del successo dell'azienda. Con un background in ingegneria elettrica presso l'Oregon State University e un master a Stanford, Huang ha unito la competenza tecnica a un acume per gli affari senza pari.</p>
+            <p class="text-stone-600 mb-4">È famoso per il suo stile di gestione non convenzionale, che include decine di riporti diretti per appiattire la gerarchia e accelerare il flusso di informazioni. Questa struttura, unita a una cultura di "onestà intellettuale", permette a NVIDIA di essere straordinariamente agile. Le sue scommesse strategiche, come la creazione della GPU e il lancio di CUDA, dimostrano una rara capacità di creare mercati futuri, non solo di servirli. La sua guida è considerata un "fossato organizzativo" tanto importante quanto quello tecnologico.</p>
+        </div>
+        
+        <div id="modal-content-colette-kress">
+            <h4 class="text-xl font-bold text-stone-800 mb-4">Colette Kress: La Mente Finanziaria</h4>
+            <p class="text-stone-600 mb-4">Colette Kress, Executive Vice President e Chief Financial Officer (CFO), è entrata in NVIDIA nel 2013, portando con sé quasi 25 anni di esperienza in giganti tecnologici. Prima di NVIDIA, ha ricoperto ruoli di leadership finanziaria in Cisco e Microsoft, dove è stata CFO della divisione Server and Tools.</p>
+            <p class="text-stone-600 mb-4">In NVIDIA, Kress è responsabile di tutte le operazioni finanziarie, incluse la pianificazione e l'analisi, la tesoreria, le relazioni con gli investitori e la contabilità. Ha guidato l'azienda attraverso la sua fase di crescita più esplosiva, gestendo un bilancio che è cresciuto in modo esponenziale e comunicando efficacemente la strategia di NVIDIA alla comunità finanziaria. La sua profonda esperienza nel settore tecnologico e la sua disciplina finanziaria sono state fondamentali per tradurre l'innovazione tecnologica di NVIDIA in performance finanziarie da record.</p>
+        </div>
+
+        <div id="modal-content-debora-shoquist">
+            <h4 class="text-xl font-bold text-stone-800 mb-4">Debora Shoquist: L'Architetto delle Operazioni</h4>
+            <p class="text-stone-600 mb-4">Debora Shoquist, Executive Vice President of Operations, è una figura cruciale, anche se meno visibile pubblicamente. È entrata in NVIDIA nel 2007 e supervisiona la complessa catena di fornitura globale dell'azienda, la produzione, la qualità e la logistica. In un'azienda che progetta chip ma non li fabbrica (modello "fabless"), il suo ruolo è fondamentale.</p>
+            <p class="text-stone-600 mb-4">La sua responsabilità principale è gestire la partnership strategica con produttori di semiconduttori come TSMC e Samsung, assicurando che NVIDIA abbia accesso alle tecnologie di processo più avanzate e alla capacità produttiva necessaria per soddisfare una domanda esplosiva. Prima di NVIDIA, ha ricoperto ruoli di leadership operativa in JDS Uniphase, Coherent e Quantum. La sua esperienza è stata determinante per permettere a NVIDIA di scalare la produzione e di navigare le complesse sfide della supply chain globale dei semiconduttori.</p>
+        </div>
+
+        <div id="modal-content-tim-teter">
+            <h4 class="text-xl font-bold text-stone-800 mb-4">Tim Teter: Il Guardiano Legale</h4>
+            <p class="text-stone-600 mb-4">Tim Teter, Executive Vice President, General Counsel e Segretario, guida il team legale di NVIDIA dal 2017. Le sue responsabilità includono la proprietà intellettuale, il governo societario, le questioni normative e i contenziosi. In un settore definito da una feroce competizione sulla proprietà intellettuale, il suo ruolo è vitale per proteggere il vasto portafoglio di brevetti di NVIDIA.</p>
+            <p class="text-stone-600 mb-4">Prima di unirsi a NVIDIA, Teter è stato partner presso lo studio legale Cooley LLP, rappresentando importanti aziende tecnologiche. Ha anche lavorato per quasi un decennio presso Apple, dove ha ricoperto il ruolo di Vice President of Litigation. La sua profonda esperienza nei contenziosi sulla proprietà intellettuale e nelle questioni legali complesse del settore tecnologico lo rende una figura chiave nel proteggere il fossato competitivo di NVIDIA e nel navigare il crescente panorama normativo globale.</p>
+        </div>
+    </div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -442,6 +486,13 @@
                     }
                 }
             };
+            
+            const managementTeam = [
+                { id: 'jensen-huang', name: 'Jensen Huang', title: 'Fondatore, Presidente e CEO', img: 'https://placehold.co/400x400/e2e8f0/475569?text=JH' },
+                { id: 'colette-kress', name: 'Colette Kress', title: 'EVP e Chief Financial Officer', img: 'https://placehold.co/400x400/e2e8f0/475569?text=CK' },
+                { id: 'debora-shoquist', name: 'Debora Shoquist', title: 'EVP, Operations', img: 'https://placehold.co/400x400/e2e8f0/475569?text=DS' },
+                { id: 'tim-teter', name: 'Tim Teter', title: 'EVP, General Counsel', img: 'https://placehold.co/400x400/e2e8f0/475569?text=TT' }
+            ];
 
             const competitionData = [
                 { metric: 'Capitalizzazione (approx.)', nvidia: '~ $3.8 T', amd: '~ $232 B', intel: '~ $98 B' },
@@ -454,13 +505,11 @@
 
             function initializeChart() {
                 const ctx = document.getElementById('financialChart').getContext('2d');
-                const chartDatasets = Object.keys(financialData.datasets).map(key => {
-                    return {
-                        ...financialData.datasets[key],
-                        id: key, // Add a unique ID for robust lookup
-                        type: 'line'
-                    };
-                });
+                const chartDatasets = Object.keys(financialData.datasets).map(key => ({
+                    ...financialData.datasets[key],
+                    id: key,
+                    type: 'line'
+                }));
 
                 financialChart = new Chart(ctx, {
                     type: 'line',
@@ -471,53 +520,27 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        interaction: {
-                            mode: 'index',
-                            intersect: false,
-                        },
+                        interaction: { mode: 'index', intersect: false },
                         scales: {
                             yDollars: {
-                                type: 'linear',
-                                display: true,
-                                position: 'left',
-                                grid: { color: '#e7e5e4' },
-                                ticks: { color: '#57534e' },
-                                title: {
-                                    display: true,
-                                    text: 'Miliardi di USD',
-                                    color: '#57534e'
-                                }
+                                type: 'linear', display: true, position: 'left',
+                                grid: { color: '#e7e5e4' }, ticks: { color: '#57534e' },
+                                title: { display: true, text: 'Miliardi di USD', color: '#57534e' }
                             },
                             yRatios: {
-                                type: 'linear',
-                                display: true,
-                                position: 'right',
-                                grid: { drawOnChartArea: false },
-                                ticks: { color: '#57534e' },
-                                title: {
-                                    display: true,
-                                    text: 'Rapporti / %',
-                                    color: '#57534e'
-                                }
+                                type: 'linear', display: true, position: 'right',
+                                grid: { drawOnChartArea: false }, ticks: { color: '#57534e' },
+                                title: { display: true, text: 'Rapporti / %', color: '#57534e' }
                             }
                         },
                         plugins: {
                             legend: {
                                 position: 'bottom',
-                                labels: {
-                                    color: '#57534e',
-                                    usePointStyle: true,
-                                    boxWidth: 8,
-                                    padding: 20
-                                }
+                                labels: { color: '#57534e', usePointStyle: true, boxWidth: 8, padding: 20 }
                             },
                             tooltip: {
-                                mode: 'index',
-                                intersect: false,
-                                backgroundColor: '#1c1917',
-                                titleColor: '#f5f5f4',
-                                bodyColor: '#f5f5f4',
-                                titleFont: { weight: 'bold' },
+                                mode: 'index', intersect: false, backgroundColor: '#1c1917',
+                                titleColor: '#f5f5f4', bodyColor: '#f5f5f4', titleFont: { weight: 'bold' },
                                 callbacks: {
                                     label: function(context) {
                                         let label = context.dataset.label || '';
@@ -527,8 +550,7 @@
                                                 label += context.parsed.y.toFixed(2) + ' Mld $';
                                             } else if (label.includes('%')) {
                                                  label += context.parsed.y.toFixed(1) + '%';
-                                            }
-                                            else {
+                                            } else {
                                                 label += context.parsed.y.toFixed(2) + 'x';
                                             }
                                         }
@@ -538,14 +560,8 @@
                             }
                         },
                         elements: {
-                            line: {
-                                tension: 0.3,
-                                fill: 'start'
-                            },
-                            point: {
-                                radius: 3,
-                                hoverRadius: 6
-                            }
+                            line: { tension: 0.3, fill: 'start' },
+                            point: { radius: 3, hoverRadius: 6 }
                         }
                     }
                 });
@@ -555,47 +571,96 @@
                 let yDollarsVisible = false;
                 let yRatiosVisible = false;
 
-                const buttons = document.querySelectorAll('.metric-button');
-                buttons.forEach(button => {
+                document.querySelectorAll('.metric-button').forEach(button => {
                     const metric = button.dataset.metric;
-                    // Find dataset by its unique 'id'
                     const dataset = financialChart.data.datasets.find(ds => ds.id === metric);
                     
                     if (dataset) {
                         const isActive = button.classList.contains('active');
                         dataset.hidden = !isActive;
-
                         if (isActive) {
-                            if (dataset.yAxisID === 'yDollars') {
-                                yDollarsVisible = true;
-                            } else if (dataset.yAxisID === 'yRatios') {
-                                yRatiosVisible = true;
-                            }
+                            if (dataset.yAxisID === 'yDollars') yDollarsVisible = true;
+                            else if (dataset.yAxisID === 'yRatios') yRatiosVisible = true;
                         }
                     }
                 });
                 
                 financialChart.options.scales.yDollars.display = yDollarsVisible;
                 financialChart.options.scales.yRatios.display = yRatiosVisible;
-                
                 financialChart.update();
             }
 
             function setupMetricButtons() {
-                const buttons = document.querySelectorAll('.metric-button');
-                buttons.forEach(button => {
+                document.querySelectorAll('.metric-button').forEach(button => {
                     const metric = button.dataset.metric;
                     if (!financialData.datasets[metric].hidden) {
                         button.classList.add('active');
                     }
-                    
                     button.addEventListener('click', (e) => {
                         e.target.classList.toggle('active');
                         updateChart();
                     });
                 });
-                // Initial call to set axis visibility correctly on page load
                 updateChart();
+            }
+            
+            function populateManagementGrid() {
+                const grid = document.getElementById('management-grid');
+                grid.innerHTML = '';
+                managementTeam.forEach(member => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 text-center flex flex-col items-center';
+                    card.innerHTML = `
+                        <img src="${member.img}" alt="Immagine di ${member.name}" class="w-24 h-24 rounded-full mb-4 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x400/e2e8f0/475569?text=??';">
+                        <h4 class="text-lg font-bold text-stone-800">${member.name}</h4>
+                        <p class="text-green-600 font-medium">${member.title}</p>
+                        <button data-modal-target="modal-${member.id}" class="mt-4 text-green-600 font-semibold hover:text-green-800 self-center">Leggi Biografia &rarr;</button>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+
+            function setupModals() {
+                const modal = document.getElementById('app-modal');
+                const modalClose = document.getElementById('modal-close');
+                const modalTitle = document.getElementById('modal-title');
+                const modalBody = document.getElementById('modal-body');
+
+                function openModal(targetId) {
+                    const contentEl = document.getElementById(`modal-content-${targetId}`);
+                    if (!contentEl) return;
+                    
+                    const title = contentEl.querySelector('h4').textContent;
+                    modalTitle.textContent = title;
+                    modalBody.innerHTML = contentEl.innerHTML;
+                    
+                    modal.classList.remove('hidden');
+                    setTimeout(() => modal.classList.remove('opacity-0'), 10);
+                    setTimeout(() => modal.querySelector('.modal-content').classList.remove('scale-95'), 10);
+                }
+
+                function closeModal() {
+                    modal.querySelector('.modal-content').classList.add('scale-95');
+                    modal.classList.add('opacity-0');
+                    setTimeout(() => modal.classList.add('hidden'), 300);
+                }
+
+                document.body.addEventListener('click', (e) => {
+                    if (e.target.closest('[data-modal-target]')) {
+                        const targetId = e.target.closest('[data-modal-target]').dataset.modalTarget;
+                        openModal(targetId.replace('modal-', ''));
+                    }
+                });
+
+                modalClose.addEventListener('click', closeModal);
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeModal();
+                });
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === "Escape" && !modal.classList.contains('hidden')) {
+                        closeModal();
+                    }
+                });
             }
 
             function populateCompetitionTable() {
@@ -678,6 +743,8 @@
 
             initializeChart();
             setupMetricButtons();
+            populateManagementGrid();
+            setupModals();
             populateCompetitionTable();
             setupNavigation();
             setupNavHighlight();
